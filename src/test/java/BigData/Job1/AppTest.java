@@ -1,4 +1,4 @@
-package BigData.BigData;
+package BigData.Job1;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
