@@ -27,6 +27,8 @@ public class JobOne {
 			System.exit(2);
 		}
 		
+		
+		
 		Job job = new Job(conf, "JobOne");
 		job.setJarByClass(JobOne.class);
 		
@@ -52,63 +54,66 @@ public class JobOne {
 
 	public static class JobOneReducer extends
 			Reducer<Text, Text, Text, Text> {
+		
+		private final int PREZZOCHIUSURA = 0;
+		private final int PREZZOMINIMO = 1;
+		private final int PREZZOMASSIMO = 2;
+		private final int VOLUME = 3;
+		private final int DATE = 4; 
 
-		public void reduce(
-				Text ActionSymbolId,
-				Iterable<Text> values,
-				Reducer<Text, Text, Text, Text>.Context context)
+		public void reduce(Text ActionSymbolId,Iterable<Text> values,Context context)
 				throws IOException, InterruptedException {
 			
 			float minPrezzo= Float.MAX_VALUE;
-			float maxPrezzo= Float.MAX_VALUE;
+			float maxPrezzo= Float.MIN_VALUE;
 			long sumVolume=0;
 			float prezzoChiusuraIniziale=0;
 			float prezzoChiusuraFinale=0;
-			long UltimaData=0;
-			long PrimaData=0;
+			long UltimaData=Long.MIN_VALUE;
+			long PrimaData= Long.MAX_VALUE;
 			float averageVolume=0;
 			int numberOfRecord=0;
 			int variazioneQuotazione=0;
 			
-
+			
 			
 			for (Text Actionvalues : values) {
 				String[] Avalue= Actionvalues.toString().split(",");
-				float prezzoMinimo= Float.parseFloat(Avalue[4]);
-				float prezzoMassimo= Float.parseFloat(Avalue[5]);
-				long volume=Long.parseLong(Avalue[6]);
-				long date= Long.parseLong(Avalue[7]);
-				float prezzoChiusura= Float.parseFloat(Avalue[2]);
+				float prezzoMinimo= Float.parseFloat(Avalue[PREZZOMINIMO]);
+				float prezzoMassimo= Float.parseFloat(Avalue[PREZZOMASSIMO]);
+				long volume=Long.parseLong(Avalue[VOLUME]);
+				long date= Long.parseLong(Avalue[DATE]);
+				float prezzoChiusura= Float.parseFloat(Avalue[PREZZOCHIUSURA]);
 				
-				numberOfRecord++;
+				    numberOfRecord++;
 				
-				if (prezzoMinimo<=minPrezzo) {
-					minPrezzo=prezzoMinimo;
-				 }
-				if (prezzoMassimo>=maxPrezzo) {
-					maxPrezzo=prezzoMassimo;
-				 }
+				    if (prezzoMinimo<=minPrezzo) {
+					   minPrezzo=prezzoMinimo;
+				    }
+				    if (prezzoMassimo>=maxPrezzo) {
+					   maxPrezzo=prezzoMassimo;
+				    }
 				
-				 sumVolume+=volume;
+				    sumVolume+=volume;
 				 
-				 if (date<=PrimaData) {
-					 prezzoChiusuraIniziale=prezzoChiusura;
-					 }
+				    if (date<PrimaData) {
+				      PrimaData=date;
+					  prezzoChiusuraIniziale=prezzoChiusura;
+					}
 				 
-				 if (date>=UltimaData) {
-					 prezzoChiusuraFinale=prezzoChiusura;
-					 }
+				    if (date>UltimaData) {
+				       UltimaData=date;
+					   prezzoChiusuraFinale=prezzoChiusura;
+				    }
 				
 				
-			}
+			      }
+				
 			
 			averageVolume= sumVolume/numberOfRecord;
 			variazioneQuotazione=Math.round(((prezzoChiusuraFinale - prezzoChiusuraIniziale )/prezzoChiusuraIniziale)*100);
 			
-			Text result= new Text(variazioneQuotazione + " " + minPrezzo + " " + maxPrezzo + " " + averageVolume );
-			
-			
-			
+			Text result= new Text(" "+ variazioneQuotazione + " " + minPrezzo + " " + maxPrezzo + " " + averageVolume );
 			context.write(new Text(ActionSymbolId), result);
 		}
 	}
@@ -125,8 +130,7 @@ public class JobOne {
 		
 		
 
-		public void map(Object key, Text value,
-				Mapper<Object, Text, Text, Text>.Context context)
+		public void map(Object key, Text value, Context context)
 				throws IOException, InterruptedException {
 			
 			
@@ -134,20 +138,20 @@ public class JobOne {
 			 String[] campi= input.split(",");
 			 String[] Actiondate= campi[DATE].split("-");
 			 
-			 System.out.println("DATA= "+ campi[7]);
 			 
-			 //problema sta qui
 			 int anno= Integer.parseInt(Actiondate[0]);
 			
 			 if(campi.length==8) {
 			 
 			   if(anno>=2008 && anno<=2018 ){
 				 
-			     long millisecondDate= transformDate(campi[DATE]);
+			    long millisecondDate= transformDate(campi[DATE]);
 
-				 context.write(new Text(campi[SYMBOL]),new Text(campi[PREZZOCHIUSURA] + "," + campi[PREZZOMINIMO] + "," + campi[PREZZOMASSIMO] + ","+ campi[VOLUME] + "," + millisecondDate));
+				 context.write(new Text(campi[SYMBOL]),new Text(campi[PREZZOCHIUSURA] + "," + campi[PREZZOMINIMO] + "," + campi[PREZZOMASSIMO] + ","+ campi[VOLUME] + "," + millisecondDate ));
 			   } 
-			 }else {
+			 }
+			 
+			 else {
 				context.getCounter(COUNTERS.INVALID_RECORD_COUNT).increment(1L);
 			}
 			 
