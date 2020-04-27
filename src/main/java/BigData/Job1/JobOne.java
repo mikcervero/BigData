@@ -26,14 +26,22 @@ public class JobOne {
 			System.err.println("Usage: uniquelisteners <in> <out>");
 			System.exit(2);
 		}
+		
 		Job job = new Job(conf, "JobOne");
 		job.setJarByClass(JobOne.class);
+		
 		job.setMapperClass(JobOneMapper.class);
+		
 		job.setReducerClass(JobOneReducer.class);
+		
 		job.setOutputKeyClass(Text.class);
+		
 		job.setOutputValueClass(Text.class);
+		
 		FileInputFormat.addInputPath(job, new Path(args[0]));
+		
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 		org.apache.hadoop.mapreduce.Counters counters = job.getCounters();
 		
@@ -107,25 +115,37 @@ public class JobOne {
 
 	public static class JobOneMapper extends
 			Mapper<Object, Text, Text, Text> {
-
+          
+		private final int SYMBOL = 0;
+		private final int PREZZOCHIUSURA = 2;
+		private final int PREZZOMINIMO = 4;
+		private final int PREZZOMASSIMO = 5;
+		private final int VOLUME = 6;
+		private final int DATE = 7; 
+		
+		
 
 		public void map(Object key, Text value,
 				Mapper<Object, Text, Text, Text>.Context context)
 				throws IOException, InterruptedException {
 			
+			
 			 String input = value.toString();
 			 String[] campi= input.split(",");
-			 String[] date= campi[7].split("-");
+			 String[] Actiondate= campi[DATE].split("-");
 			 
-			 int anno= Integer.parseInt(date[0]);
+			 System.out.println("DATA= "+ campi[7]);
 			 
+			 //problema sta qui
+			 int anno= Integer.parseInt(Actiondate[0]);
+			
 			 if(campi.length==8) {
 			 
 			   if(anno>=2008 && anno<=2018 ){
 				 
-			     long millisecondDate= transformDate(campi[7]);
+			     long millisecondDate= transformDate(campi[DATE]);
 
-				 context.write(new Text(campi[0]),new Text(campi[2] + "," + campi[4] + "," + campi[5] + ","+ campi[6] + "," + millisecondDate));
+				 context.write(new Text(campi[SYMBOL]),new Text(campi[PREZZOCHIUSURA] + "," + campi[PREZZOMINIMO] + "," + campi[PREZZOMASSIMO] + ","+ campi[VOLUME] + "," + millisecondDate));
 			   } 
 			 }else {
 				context.getCounter(COUNTERS.INVALID_RECORD_COUNT).increment(1L);
@@ -134,11 +154,14 @@ public class JobOne {
 			 
 
 		}
-		private long transformDate(String date) {
+		private long transformDate(String dataToTrasform ) {
 			 SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd");
-			 Date dateFrm = null; try {
-			 dateFrm = format.parse(date); } catch (ParseException e) {
-			 e.printStackTrace(); }
+			 Date dateFrm = null; 
+			 try {
+			 dateFrm = format.parse(dataToTrasform); 
+			 } catch (ParseException e) {
+			 e.printStackTrace(); 
+			 }
 			 return dateFrm.getTime();
 		 }
 	}
