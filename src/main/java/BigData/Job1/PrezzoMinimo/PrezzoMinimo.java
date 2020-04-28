@@ -3,7 +3,6 @@ package BigData.Job1.PrezzoMinimo;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -39,7 +38,7 @@ public class PrezzoMinimo {
 		
 		job.setOutputKeyClass(Text.class);
 		
-		job.setOutputValueClass(DoubleWritable.class);
+		job.setOutputValueClass(FloatWritable.class);
 		
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		

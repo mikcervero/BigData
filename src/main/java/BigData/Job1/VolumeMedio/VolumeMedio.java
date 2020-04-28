@@ -1,18 +1,20 @@
-package BigData.Job1.PrezzoMassimo;
+package BigData.Job1.VolumeMedio;
 
 import java.io.IOException;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.FloatWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import BigData.Job1.PrezzoMinimo.PrezzoMinimo;
 
-public class PrezzoMassimo {
+public class VolumeMedio {
+	
 	
 	private enum COUNTERS {
 		INVALID_RECORD_COUNT
@@ -27,14 +29,16 @@ public class PrezzoMassimo {
 		
 		
 		
-		Job job = new Job(conf, "MaxPrice");
-		job.setJarByClass(PrezzoMassimo.class);
+		Job job = new Job(conf, "AverageVolume");
+		job.setJarByClass(PrezzoMinimo.class);
 		
-		job.setMapperClass(PrezzoMassimoMapper.class);
+		job.setMapperClass(VolumeMedioMapper.class);
 		
-		job.setReducerClass(PrezzoMassimoReducer.class);
+		job.setReducerClass(VolumeMedioReducer.class);
 		
 		job.setOutputKeyClass(Text.class);
+		
+		job.setMapOutputKeyClass(LongWritable.class);
 		
 		job.setOutputValueClass(FloatWritable.class);
 		
@@ -50,37 +54,39 @@ public class PrezzoMassimo {
 						.getValue());
 	}
 	
-    public static class PrezzoMassimoReducer extends Reducer<Text, FloatWritable, Text, FloatWritable> {
+    public static class VolumeMedioReducer extends Reducer<Text, LongWritable, Text, FloatWritable> {
 	
 
-		public void reduce(Text ActionSymbolId,Iterable<FloatWritable> values,Context context)
+		public void reduce(Text ActionSymbolId,Iterable<LongWritable> values,Context context)
 				throws IOException, InterruptedException {
 			
-			float maxPrezzo= Float.MIN_VALUE;
+			float averageVolume=0;
+			int numberOfRecord=0;
+			long sumVolume=0;
+			FloatWritable averageVolumeForInterval= new FloatWritable();
 			
-			FloatWritable maxPriceforInterval= new FloatWritable();
-			
-			for (FloatWritable ActionMaxPrice : values) {
+			for (LongWritable ActionVolume : values) {
 				
-				float prezzoMassimo= Float.parseFloat(ActionMaxPrice.toString());
+				numberOfRecord++;
 				
-				if (prezzoMassimo<=maxPrezzo) {
-					   maxPrezzo=prezzoMassimo;
-				    }    
+				sumVolume += Long.parseLong(ActionVolume.toString());
+				
 				
 			 }
 		    
-			maxPriceforInterval.set(maxPrezzo);
+			averageVolume= sumVolume/numberOfRecord;
 			
-			context.write(new Text(ActionSymbolId), maxPriceforInterval);
+			averageVolumeForInterval.set(averageVolume);
+			
+			context.write(new Text(ActionSymbolId), averageVolumeForInterval);
 		}
 	}
 	
 	
-	public static class PrezzoMassimoMapper extends Mapper<Object, Text, Text, FloatWritable> {
+	public static class VolumeMedioMapper extends Mapper<Object, Text, Text, LongWritable> {
   
 	   private final int SYMBOL = 0;
-       private final int PREZZOMASSIMO = 5;
+	   private final int VOLUME = 6;
        private final int DATE = 7;
 
 
@@ -97,13 +103,13 @@ public class PrezzoMassimo {
 		 
 		       int anno= Integer.parseInt(Actiondate[0]); 
 		 
-		       FloatWritable prezzoMassimo= new FloatWritable();
+		       LongWritable volume= new LongWritable();
 	 
 	           if(anno>=2008 && anno<=2018 ){
 	    
-	              prezzoMassimo.set(Float.parseFloat(campi[PREZZOMASSIMO]));	 
+	              volume.set(Long.parseLong(campi[VOLUME]));	 
 
-		          context.write(new Text(campi[SYMBOL]),prezzoMassimo);
+		          context.write(new Text(campi[SYMBOL]),volume);
 	           }  
 	      }
 	 
@@ -118,8 +124,5 @@ public class PrezzoMassimo {
 
 
     }
-	
-	
-
 
 }
