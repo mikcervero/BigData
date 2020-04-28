@@ -52,8 +52,7 @@ public class JobOne {
 						.getValue());
 	}
 
-	public static class JobOneReducer extends
-			Reducer<Text, Text, Text, Text> {
+	public static class JobOneReducer extends Reducer<Text, Text, Text, Text> {
 		
 		private final int PREZZOCHIUSURA = 0;
 		private final int PREZZOMINIMO = 1;
@@ -118,8 +117,7 @@ public class JobOne {
 		}
 	}
 
-	public static class JobOneMapper extends
-			Mapper<Object, Text, Text, Text> {
+	public static class JobOneMapper extends Mapper<Object, Text, Text, Text> {
           
 		private final int SYMBOL = 0;
 		private final int PREZZOCHIUSURA = 2;
@@ -130,34 +128,35 @@ public class JobOne {
 		
 		
 
-		public void map(Object key, Text value, Context context)
-				throws IOException, InterruptedException {
+		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 			
 			
 			 String input = value.toString();
 			 String[] campi= input.split(",");
-			 String[] Actiondate= campi[DATE].split("-");
-			 
-			 
-			 int anno= Integer.parseInt(Actiondate[0]);
+			
 			
 			 if(campi.length==8) {
-			 
-			   if(anno>=2008 && anno<=2018 ){
 				 
-			    long millisecondDate= transformDate(campi[DATE]);
+			     String[] Actiondate= campi[DATE].split("-");
+				 
+				 int anno= Integer.parseInt(Actiondate[0]);
+			 
+			     if(anno>=2008 && anno<=2018 ){
+				 
+			       long millisecondDate= transformDate(campi[DATE]);
 
-				 context.write(new Text(campi[SYMBOL]),new Text(campi[PREZZOCHIUSURA] + "," + campi[PREZZOMINIMO] + "," + campi[PREZZOMASSIMO] + ","+ campi[VOLUME] + "," + millisecondDate ));
-			   } 
-			 }
+				   context.write(new Text(campi[SYMBOL]),new Text(campi[PREZZOCHIUSURA] + "," + campi[PREZZOMINIMO] + "," + campi[PREZZOMASSIMO] + ","+ campi[VOLUME] + "," + millisecondDate ));
+			     } 
+			   }
 			 
 			 else {
 				context.getCounter(COUNTERS.INVALID_RECORD_COUNT).increment(1L);
-			}
+			 }
 			 
 			 
 
 		}
+		
 		private long transformDate(String dataToTrasform ) {
 			 SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd");
 			 Date dateFrm = null; 
