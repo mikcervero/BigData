@@ -1,19 +1,19 @@
-DROP TABLE if exists historical_stock_prices;
+DROP TABLE if exists historicalStockPrices;
 
-CREATE TABLE historical_stock_prices (ticker STRING, open DOUBLE, close DOUBLE, adj_close DOUBLE, lowThe DOUBLE, highThe DOUBLE, volume INT, data DATE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+CREATE TABLE historicalStockPrices (ticker STRING, open DOUBLE, close DOUBLE, adj_close DOUBLE, lowThe DOUBLE, highThe DOUBLE, volume INT, data DATE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
-LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv' OVERWRITE INTO TABLE historical_stock_prices;
+LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv' OVERWRITE INTO TABLE historicalStockPrices;
 
 
-CREATE TABLE historical_stocks (ticker STRING, exchange STRING, nome STRING, sector STRING, industry STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+CREATE TABLE historicalStocks (ticker STRING, exchange STRING, nome STRING, sector STRING, industry STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
-LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv' OVERWRITE INTO TABLE historical_stocks;
+LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv' OVERWRITE INTO TABLE historicalStocks;
 
 DROP TABLE if exists tmp; 
 
 CREATE TABLE tmp as
 SELECT ticker, close, volume, substr(data,1,4) as year, substr (data,6,2) as month, substr (data,9,2) as day
-FROM historical_stock_prices;
+FROM historicalStockPrices;
 
 DROP TABLE if exists historical_stock_prices_byYear;
 
