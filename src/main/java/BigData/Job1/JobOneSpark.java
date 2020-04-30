@@ -3,8 +3,12 @@ package BigData.Job1;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.*;
+
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.SparkSession;
+
+import scala.Tuple2;
 
 public class JobOneSpark {
 	
@@ -32,8 +36,11 @@ public class JobOneSpark {
 		//words.foreach(x -> System.out.println(Integer.parseInt(SPACE.split(x[7])[0])));
 		//JavaRDD<Stirng[]> iltro = words.foreach(x -> );
 		JavaRDD<String[]> filtro = words.filter(x -> ((Integer.parseInt(SPACE.split(x[7])[0])) >= 2008 && (Integer.parseInt(SPACE.split(x[7])[0])) <=2018));
+		//JavaRDD<String> mapper = filtro.map(x -> new String[] {x[0], x[2], x[4], x[5], x[6]});
+		JavaPairRDD<String, Integer[]> tupla = filtro.mapToPair(x -> new Tuple2<>(x[0], new Integer[] {Integer.parseInt(x[2]), Integer.parseInt(x[4]), Integer.parseInt(x[5]), Integer.parseInt(x[6]),1}));
+		JavaPairRDD<String, Integer[]> agg = tupla.reduceByKey((x,y)-> new Integer[] {Math.min(x[1],y[1]), Math.max(x[2],y[2]), (x[3]+y[3]/x[4]+y[4])}); 
 		//((Integer.parseInt(x[DATE].split('-')[0]) >= 2008) && (Integer.parseInt(x[DATE].split('-')[0])<=2018)));
-		System.out.println("lunghezza"+filtro.count());
+	//	System.out.println("lunghezza"+filtro.count());
 		
 
 		
