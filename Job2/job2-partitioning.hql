@@ -5,7 +5,8 @@ CREATE TABLE historicalStockPrices (ticker STRING, open DOUBLE, close DOUBLE, ad
 LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv' OVERWRITE INTO TABLE historicalStockPrices;
 
 
-CREATE TABLE historicalStocks (ticker STRING, exchange STRING, nome STRING, sector STRING, industry STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+CREATE TABLE historicalStocks (ticker STRING, exchange STRING, nome STRING, sector STRING, industry STRING) ROW FORMAT SERDE 'org.apache.hadoop.hive.contrib.serde2.MultiDelimitSerDe' 
+WITH SERDEPROPERTIES ("input.regex" = "[",]") stored as textfile;
 
 LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv' OVERWRITE INTO TABLE historicalStocks;
 
