@@ -1,7 +1,8 @@
 package BigData.Job1;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.spark.api.java.JavaPairRDD;
@@ -13,38 +14,75 @@ import scala.Tuple2;
 public class JobOneSpark {
 	
 	private static final Pattern COMMA = Pattern.compile(",");
-	private static final Pattern SPACE = Pattern.compile("-");
-	private final int SYMBOL = 0;
-	private final int PREZZOCHIUSURA = 2;
-	private final int PREZZOMINIMO = 4;
-	private final int PREZZOMASSIMO = 5;
-	private final int VOLUME = 6;
-	private final int DATE = 7; 
-	
+	private static final Pattern DASH = Pattern.compile("-");
+
 	public static void main(String[] args) {
 		
-		String file = "/home/fabiano/data/historical_stock_prices.csv";
+		String file = "/home/fabiano/data/dataset.csv";
 		
 		SparkSession spark = SparkSession
 				.builder()
 				.appName("JobOne")
 				.getOrCreate();
+				
 		
-		JavaRDD<String> lines = spark.read().textFile(file).javaRDD();
+		JavaRDD<String> line = spark.read().textFile(file).javaRDD();
 		
-		JavaRDD<String[]> words = lines.map(s -> COMMA.split(s));
-		//words.foreach(x -> System.out.println(Integer.parseInt(SPACE.split(x[7])[0])));
-		//JavaRDD<Stirng[]> iltro = words.foreach(x -> );
-		JavaRDD<String[]> filtro = words.filter(x -> ((Integer.parseInt(SPACE.split(x[7])[0])) >= 2008 && (Integer.parseInt(SPACE.split(x[7])[0])) <=2018));
-		//JavaRDD<String> mapper = filtro.map(x -> new String[] {x[0], x[2], x[4], x[5], x[6]});
-		JavaPairRDD<String, Integer[]> tupla = filtro.mapToPair(x -> new Tuple2<>(x[0], new Integer[] {Integer.parseInt(x[2]), Integer.parseInt(x[4]), Integer.parseInt(x[5]), Integer.parseInt(x[6]),1}));
-		JavaPairRDD<String, Integer[]> agg = tupla.reduceByKey((x,y)-> new Integer[] {Math.min(x[1],y[1]), Math.max(x[2],y[2]), (x[3]+y[3]/x[4]+y[4])}); 
-		//((Integer.parseInt(x[DATE].split('-')[0]) >= 2008) && (Integer.parseInt(x[DATE].split('-')[0])<=2018)));
-	//	System.out.println("lunghezza"+filtro.count());
+		JavaRDD<String[]> words = line.map(s -> s.split(",")).filter(x -> x.length==8);
+	
+		JavaRDD<String[]> filtro = words.filter(x -> ((Integer.parseInt(DASH.split(x[7])[0])) >= 2008 && (Integer.parseInt(DASH.split(x[7])[0])) <=2018));
+	
 		
+		JavaPairRDD<String, Double[]> tupla = filtro.mapToPair(x -> new Tuple2<>(x[0],new Double[] {Double.parseDouble(x[4]), Double.parseDouble(x[5]), Double.parseDouble(x[2]), transformDate(x[7]), Double.parseDouble(x[6]), 1.0}));
 
+		JavaPairRDD<String, Double[]> agg = tupla.reduceByKey((x,y)-> new Double[] {Math.min(x[0],y[0]), Math.max(x[1], y[1]), chiusurainiziale(x[2],y[2],x[3],y[3]), chiusurafinale(x[2],y[2],x[3],y[3]), x[4]+y[4], x[5]+y[5]});
+
+		JavaRDD<String> risultato = agg.map(couple -> String.valueOf(couple._1())+":"+String.valueOf(Math.round((couple._2()[3]/couple._2()[2])*100-100)+","+String.valueOf(couple._2()[0])+","+String.valueOf(couple._2()[1])+","+String.valueOf((couple._2()[4])/(couple._2()[5]))));
+
+		risultato.saveAsTextFile("/home/fabiano/sparkresult.txt");
 		
 	
+	
 	}
+	
+	public static String stampa (Double[] a) {
+		String b = "";
+		for (int i=0; i<a.length; i++) {
+			if (i==a.length-1) {
+				b = b+(String.valueOf(a[i]));
+				System.out.println(i);
+			}
+			else {
+				b = b+(String.valueOf(a[i]))+",";
+				System.out.println(i);
+			}
+		}
+		return b;
+	}
+	
+	public static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
+		if (newdate < olddate) {
+			return newclose; 
+		}
+		return oldclose;
+	}
+	
+	public static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
+		if (newdate > olddate) {
+			return newclose;
+		}
+		return oldclose;
+	}
+	
+	public static Double transformDate(String dataToTrasform ) {
+		 SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd");
+		 Date dateFrm = null; 
+		 try {
+		 dateFrm = format.parse(dataToTrasform); 
+		 } catch (ParseException e) {
+		 e.printStackTrace(); 
+		 }
+		 return Double.parseDouble(String.valueOf(dateFrm.getTime()));
+	 }
 	
 }
