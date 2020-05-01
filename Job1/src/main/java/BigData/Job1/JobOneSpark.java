@@ -45,21 +45,6 @@ public class JobOneSpark {
 	
 	}
 	
-	public static String stampa (Double[] a) {
-		String b = "";
-		for (int i=0; i<a.length; i++) {
-			if (i==a.length-1) {
-				b = b+(String.valueOf(a[i]));
-				System.out.println(i);
-			}
-			else {
-				b = b+(String.valueOf(a[i]))+",";
-				System.out.println(i);
-			}
-		}
-		return b;
-	}
-	
 	public static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
 		if (newdate < olddate) {
 			return newclose; 
