@@ -22,10 +22,6 @@ CREATE TABLE historicalStocks as
 SELECT Parser(stockRow) as (ticker,name,sector)
 FROM historicalStocksRow;
 
-INSERT OVERWRITE TABLE historicalStocks
-SELECT DISTINCT * 
-FROM historicalStocks;
-
 
 DROP TABLE if exists tmp; 
 
