@@ -1,16 +1,17 @@
+DROP TABLE if exists jAll;
 DROP TABLE if exists richiestaA;
-DROP TABLE if exists jointable
 
-CREATE TABLE jointable AS
-SELECT sector,volume,year,ticker,close,year,month,day
-FROM historical_stock_prices_byYear HSP JOIN historicalStocks HS ON(HSP.ticker=HS.ticker); 
+CREATE TABLE jAll AS
+SELECT HSP.ticker,HS.sector,HSP.volume,HSP.close,HSP.day,HSP.month,HSP.year
+FROM stock_prices_byYear HSP JOIN historicalStocks HS ON(HSP.ticker=HS.ticker);
 
 
-CREATE TABLE richiestaA AS 
-SELECT pr.sector, AVG(sommaVolume),pr.year FROM
- (SELECT total.sector as sector ,count(total.volume) AS sommaVolume, total.year as year FROM
-   (SELECT sector,volume,year,ticker 
-    FROM jointable)AS total
-  GROUP BY total.sector,total.ticker)AS pr
+SELECT pr.sector, pr.year, AVG(sommaVolume) AS volumeAnnuleMedio FROM
+ (SELECT total.sector AS  sector ,count(total.volume) AS sommaVolume, total.year AS year FROM
+   (SELECT sector,volume,year,ticker
+    FROM jAll) AS total
+  GROUP BY total.sector,total.ticker,total.year) AS pr
+GROUP BY pr.sector,pr.year;
+
 
 
