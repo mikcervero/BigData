@@ -46,6 +46,7 @@ public class Parser extends GenericUDTF
 	String[] fields= text.split(",");
 	String ticker= fields[TICKER];
 	String sector= fields[fields.length-2];
+	String industry=fields[fields.length-1];
 	
 	if(sector.equals("N/A")) {
 		
@@ -57,20 +58,27 @@ public class Parser extends GenericUDTF
 		return;
 	}
 	
+	
+	if(industry.indexOf('"')!=-1) {
+		
+		sector= fields[fields.length-3];
+	}
+			
+			
 	if(fields[2].indexOf('"')!=-1) {
 		fields[2]=fields[2].replace('"', ' ');
 		fields[3]=fields[3].replace('"', ' ');
-		fields[2]=fields[2]+fields[3];
+		fields[2]=fields[2]+fields[3] ;
 		
-		forwardColObj[0]= ticker + ",";
-		forwardColObj[1]= fields[2] + ",";
+		forwardColObj[0]= ticker;
+		forwardColObj[1]= fields[2];
 		forwardColObj[2]= sector;
 			
 		forward(forwardColObj);
 					
 		}
-	forwardColObj[0]= ticker + ",";
-	forwardColObj[1]= fields[NAME] + ",";
+	forwardColObj[0]= ticker;
+	forwardColObj[1]= fields[NAME];
 	forwardColObj[2]= sector;
 		
 	forward(forwardColObj);
