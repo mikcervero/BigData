@@ -34,8 +34,14 @@ CREATE TABLE lastClose AS
 SELECT DISTINCT D.ticker,D.sector, M.name, D.close, M.year
 FROM jAll D JOIN  minMaxDate M ON(D.ticker = M.ticker AND  D.data = M.datapiurecente AND D.name=M.name AND D.sector=M.sector);
 
-CREATE TABLE variazioneAnnualeMedia AS
-SELECT va.sector, va.year, AVG(variazione) AS varazioneAnnuleMedia FROM
+CREATE TABLE variazioneAnnualeM AS
+SELECT va.sector, va.year, AVG(variazione) AS varazioneAnnualeMedia FROM
   (SELECT DISTINCT FC.ticker, FC.sector, FC.name, FC.year, round((LC.close/FC.close)*100-100,0) AS variazione
    FROM firstClose FC JOIN lastClose LC ON(FC.ticker=LC.ticker AND FC.name=LC.name AND FC.year=LC.year AND FC.sector=LC.sector))AS va
 GROUP BY va.sector, va.year; 
+
+
+CREATE TABLE job2  AS
+SELECT VA.sector,VA.year,R.volumeAnnuleMedio,VA.varazioneAnnualeMedia
+FROM richiestaA R JOIN variazioneAnnualeM VA ON(R.sector=VA.sector AND R.year=VA.year);
+
