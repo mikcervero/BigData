@@ -44,12 +44,19 @@ public class Parser extends GenericUDTF
 	String text=(String)this.inputString.getPrimitiveJavaObject(row[0]);
 	if(text == null) return;
 	
-	String[] result= processString(text);
-	if(result == null) return;
+	String result= processString(text);
 	
-	forwardColObj[0]= result[0];
-	forwardColObj[1]= result[1];
-	forwardColObj[2]= result[2];
+	if(result == null) {
+		return;
+	}
+	
+	String[] field= result.split(",");
+	
+	
+	
+	forwardColObj[0]= field[0];
+	forwardColObj[1]= field[1];
+	forwardColObj[2]= field[2];
 		
 	forward(forwardColObj);
 	 
@@ -57,17 +64,17 @@ public class Parser extends GenericUDTF
 	}
 
 
-  public String[] processString (String text)	{
+  public String processString (String text)	{
 	  
 	    String[] fields= text.split(",");
 		String ticker= fields[TICKER];
 		String sector= fields[fields.length-2];
 		String industry=fields[fields.length-1];
-		String[] result = {};
+		String result = null;
 		
 		if(sector.equals("N/A")) {
 			
-			return result=null; 
+			return result; 
 		}
 		
 		
@@ -83,20 +90,15 @@ public class Parser extends GenericUDTF
 			fields[3]=fields[3].replace('"', ' ');
 			fields[2]=fields[2]+fields[3];
 	   
-			result[0]= ticker;
-			result[1]= fields[2];
-			result[2]= sector;
+		
 			
-	        return result;
+	        return result= ticker + "," + fields[2] + "," + sector ;
 	        
 		}
 		
 		
-			result[0]= ticker;
-			result[1]= fields[NAME];
-			result[2]= sector;
 				
-			 return result;
+			 return result= ticker + "," + fields[NAME] + "," + sector ;
 			 	
   }
   
