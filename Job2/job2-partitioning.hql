@@ -1,13 +1,13 @@
 DROP TABLE if exists historicalStockPrices;
 
-CREATE TABLE historicalStockPrices (ticker STRING, open DOUBLE, close DOUBLE, adj_close DOUBLE, lowThe DOUBLE, highThe DOUBLE, volume INT, data DATE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+CREATE TABLE IF NOT EXISTS historicalStockPrices (ticker STRING, open DOUBLE, close DOUBLE, adj_close DOUBLE, lowThe DOUBLE, highThe DOUBLE, volume INT, data DATE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
 LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv' OVERWRITE INTO TABLE historicalStockPrices;
 
   
 DROP TABLE if exists historicalStocksRow;
 
-CREATE TABLE historicalStocksRow(stockRow STRING)
+CREATE TABLE IF NOT EXISTS historicalStocksRow(stockRow STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY "\n";
 
 LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv' OVERWRITE INTO TABLE historicalStocksRow;
@@ -18,20 +18,20 @@ CREATE TEMPORARY FUNCTION Parser AS 'BigData.Job2.Parser';
 
 DROP TABLE if exists historicalStocks;
 
-CREATE TABLE historicalStocks as 
+CREATE TABLE IF NOT EXISTS historicalStocks as 
 SELECT Parser(stockRow) as (ticker,name,sector)
 FROM historicalStocksRow;
 
 
 DROP TABLE if exists tmp; 
 
-CREATE TABLE tmp as
+CREATE TABLE IF NOT EXISTS tmp as
 SELECT ticker, close, volume, substr(data,1,4) as year, substr (data,6,2) as month, substr (data,9,2) as day
 FROM historicalStockPrices;
 
 DROP TABLE if exists stock_prices_byYear;
 
-CREATE TABLE stock_prices_byYear (ticker STRING, close DOUBLE, volume INT, month INT, day INT) PARTITIONED BY (year INT);
+CREATE TABLE IF NOT EXISTS stock_prices_byYear (ticker STRING, close DOUBLE, volume INT, month INT, day INT) PARTITIONED BY (year INT);
 
 INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2008) SELECT ticker, close, volume, month, day FROM tmp where year='2008';
 
