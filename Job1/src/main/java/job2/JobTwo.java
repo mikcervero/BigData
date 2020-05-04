@@ -1,4 +1,4 @@
-package BigData.Job2;
+package job2;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -16,8 +16,10 @@ import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import BigData.Job2.MapperOne.COUNTERS1;
-import BigData.Job2.MapperTwo.COUNTERS2;
+import job2.MapperOne.COUNTERS1;
+import job2.MapperTwo.COUNTERS2;
+
+
 
 public class JobTwo {
 

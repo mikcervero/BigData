@@ -1,4 +1,4 @@
-package BigData.Job2;
+package job2;
 
 import java.io.IOException;
 

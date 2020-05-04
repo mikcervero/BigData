@@ -1,4 +1,4 @@
-package BigData.Job1.VolumeMedio;
+package job1;
 
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
@@ -11,7 +11,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import BigData.Job1.PrezzoMinimo.PrezzoMinimo;
+
 
 public class VolumeMedio {
 	

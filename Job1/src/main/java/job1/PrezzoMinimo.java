@@ -1,4 +1,4 @@
-package BigData.Job1.PrezzoMinimo;
+package job1;
 
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;

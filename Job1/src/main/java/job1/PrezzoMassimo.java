@@ -1,4 +1,4 @@
-package BigData.Job1.PrezzoMassimo;
+package job1;
 
 import java.io.IOException;
 
