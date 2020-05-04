@@ -20,6 +20,8 @@ public class Parser extends GenericUDTF
 	private static final Integer OUT_COLS = 3;
 	private transient Object forwardColObj[] = new Object[OUT_COLS];
 	
+	public Parser() {};
+	
 @Override	
 	public StructObjectInspector initialize(final ObjectInspector[] args) throws UDFArgumentException {
         inputString = (PrimitiveObjectInspector)args[0];
