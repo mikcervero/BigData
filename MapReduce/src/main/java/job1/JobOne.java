@@ -35,8 +35,6 @@ public class JobOne {
 		Job job = new Job(conf, "JobOne");
 		job.setJarByClass(JobOne.class);
 
-		job.setNumReduceTasks(2);
-
 		job.setMapperClass(JobOneMapper.class);
 
 		job.setReducerClass(JobOneReducer.class);

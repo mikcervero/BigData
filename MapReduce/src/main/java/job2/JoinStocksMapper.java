@@ -8,7 +8,7 @@ import org.apache.hadoop.mapreduce.Mapper.Context;
 
 import parser.Parser;
 
-public class MapperOne extends Mapper<Object, Text, Text, Text> {
+public class JoinStocksMapper extends Mapper<Object, Text, Text, Text> {
 
 	public enum COUNTERS1 {
 		INVALID_RECORD_COUNT_JOB1

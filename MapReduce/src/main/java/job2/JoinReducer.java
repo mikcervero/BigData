@@ -8,7 +8,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 
-public class ReducerOne extends Reducer<Text, Text, Text, Text> {
+public class JoinReducer extends Reducer<Text, Text, Text, Text> {
 
 	private final int SECTOR = 0;
 	private final int NAME = 1;

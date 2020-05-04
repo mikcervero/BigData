@@ -16,8 +16,8 @@ import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import job2.MapperOne.COUNTERS1;
-import job2.MapperTwo.COUNTERS2;
+import job2.JoinStocksMapper.COUNTERS1;
+import job2.JoinPricesMapper.COUNTERS2;
 
 
 
@@ -32,23 +32,48 @@ public class JobTwo {
 //			System.err.println("Usage: uniquelisteners <in> <out>");
 //			System.exit(2);
 
+		//---------------JOB 1--------------
+		
+		
 		Job job1 = new Job(conf, "Job1");
 		job1.setJarByClass(JobTwo.class);
 
-		MultipleInputs.addInputPath(job1, new Path(args[0]), TextInputFormat.class, MapperOne.class);
+		MultipleInputs.addInputPath(job1, new Path(args[0]), TextInputFormat.class, JoinStocksMapper.class);
 
-		MultipleInputs.addInputPath(job1, new Path(args[1]), TextInputFormat.class, MapperTwo.class);
+		MultipleInputs.addInputPath(job1, new Path(args[1]), TextInputFormat.class, JoinPricesMapper.class);
 
-		job1.setReducerClass(ReducerOne.class);
+		job1.setReducerClass(JoinReducer.class);
 
 		job1.setOutputKeyClass(Text.class);
 
 		job1.setOutputValueClass(Text.class);
+		
+		Path job1output = new Path("output/job1output");
 
-		FileOutputFormat.setOutputPath(job1, new Path(args[2]));
+		FileOutputFormat.setOutputPath(job1, job1output);
 
 		job1.waitForCompletion(true);
 
+		
+		//------------JOB 2---------------
+		
+		Job job2 = new Job(conf, "Job2");
+		job2.setJarByClass(JobTwo.class);
+		
+		FileInputFormat.addInputPath(job2, job1output);
+		
+		job2.setMapperClass(MapperTwo.class);
+		
+		job2.setOutputKeyClass(Text.class);
+		
+		job2.setOutputValueClass(Text.class);
+		
+		job2.setReducerClass(ReducerTwo.class);
+		
+		FileOutputFormat.setOutputPath(job2, new Path(args[2]));
+		
+		job2.waitForCompletion(true);
+		
 		org.apache.hadoop.mapreduce.Counters counters = job1.getCounters();
 
 		long end = System.currentTimeMillis();

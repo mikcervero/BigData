@@ -6,7 +6,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-public class MapperTwo extends Mapper<Object, Text, Text, Text> {
+public class JoinPricesMapper extends Mapper<Object, Text, Text, Text> {
 
 	public enum COUNTERS2 {
 		INVALID_RECORD_COUNT_JOB2
