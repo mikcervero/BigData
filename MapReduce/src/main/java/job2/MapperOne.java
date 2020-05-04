@@ -6,6 +6,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
+import parser.Parser;
+
 public class MapperOne extends Mapper<Object, Text, Text, Text> {
 
 	public enum COUNTERS1 {

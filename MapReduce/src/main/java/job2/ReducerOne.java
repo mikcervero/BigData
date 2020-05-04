@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Reducer.Context;
+
 
 public class ReducerOne extends Reducer<Text, Text, Text, Text> {
 
