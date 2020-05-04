@@ -19,15 +19,19 @@ public class MapperOne extends Mapper<Object, Text, Text, Text> {
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
 		Parser parser = new Parser();
-		String[] campi = parser.processString(value.toString()).split(",");
+		String input = parser.processString(value.toString());
 
-		if (campi.length == 5 && campi != null) {
+		if (input != null) {
+			String[] campi = input.split(",");
 
-			context.write(new Text(campi[SYMBOL]), new Text("stocks" +","+ campi[SECTOR]+","+ campi[NAME]));
-		}
+			if (campi.length == 3) {
 
-		else {
-			context.getCounter(COUNTERS1.INVALID_RECORD_COUNT_JOB1).increment(1L);
+				context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[SECTOR] + "," + campi[NAME]));
+			}
+
+			else {
+				context.getCounter(COUNTERS1.INVALID_RECORD_COUNT_JOB1).increment(1L);
+			}
 		}
 
 	}
