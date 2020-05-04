@@ -15,8 +15,8 @@ public class MapperOne extends Mapper<Object, Text, Text, Text> {
 	}
 
 	private final int SYMBOL = 0;
-	private final int NAME = 2;
-	private final int SECTOR = 3;
+	private final int NAME = 1;
+	private final int SECTOR = 2;
 
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
@@ -31,9 +31,11 @@ public class MapperOne extends Mapper<Object, Text, Text, Text> {
 				context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[SECTOR] + "," + campi[NAME]));
 			}
 
-			else {
-				context.getCounter(COUNTERS1.INVALID_RECORD_COUNT_JOB1).increment(1L);
-			}
+		
+		}
+		
+		else {
+			context.getCounter(COUNTERS1.INVALID_RECORD_COUNT_JOB1).increment(1L);
 		}
 
 	}

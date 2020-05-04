@@ -6,7 +6,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-
 public class MapperTwo extends Mapper<Object, Text, Text, Text> {
 
 	public enum COUNTERS2 {
@@ -25,14 +24,22 @@ public class MapperTwo extends Mapper<Object, Text, Text, Text> {
 
 		if (campi.length == 8) {
 
-			context.write(new Text(campi[SYMBOL]),
-					new Text("prices" + ","+ campi[PREZZOCHIUSURA] + "," + campi[VOLUME] + "," + campi[DATE]));
-		}
+			String[] data = campi[DATE].split("-");
 
+			int anno = Integer.parseInt(data[0]);
+
+			if (anno >= 2008 && anno <= 2018) {
+
+				context.write(new Text(campi[SYMBOL]),
+						new Text("prices" + "," + campi[PREZZOCHIUSURA] + "," + campi[VOLUME] + "," + campi[DATE]));
+			}
+
+			
+		}
+		
 		else {
 			context.getCounter(COUNTERS2.INVALID_RECORD_COUNT_JOB2).increment(1L);
 		}
 
 	}
-
 }
