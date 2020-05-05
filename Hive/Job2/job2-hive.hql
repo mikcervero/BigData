@@ -14,7 +14,7 @@ FROM stock_prices_byYear HSP JOIN historicalStocks HS ON(HSP.ticker=HS.ticker);
 
 CREATE TABLE IF NOT EXISTS  richiestaA AS
 SELECT  pr.sector, pr.year, AVG(sommaVolume) AS volumeAnnuleMedio FROM
- (SELECT  total.sector AS  sector ,count(total.volume) AS sommaVolume, total.year AS year FROM
+ (SELECT  total.sector AS  sector ,SUM(total.volume) AS sommaVolume, total.year AS year FROM
    (SELECT DISTINCT sector,volume,year,ticker
     FROM jAll) AS total
   GROUP BY total.sector,total.ticker,total.year) AS pr

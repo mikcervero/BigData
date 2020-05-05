@@ -12,8 +12,8 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY "\n";
 
 LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv' OVERWRITE INTO TABLE historicalStocksRow;
 
-add jar /Applications/GitHub/BigData/Job2/ParserForHive/target/Job2-Parser.jar;                                   
-CREATE TEMPORARY FUNCTION Parser AS 'BigData.Job2.Parser';
+add jar /Applications/GitHub/BigData/Hive/Job2/Parser.jar ;                                   
+CREATE TEMPORARY FUNCTION Parser AS 'Hive.Parser.Parser';
 
 
 DROP TABLE if exists historicalStocks;
