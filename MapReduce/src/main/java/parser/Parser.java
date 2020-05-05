@@ -8,13 +8,21 @@ public class Parser
 	private final int NAME = 2;
 	
 	
-	public Parser() {};
+	/*public Parser() {};
+	
+	  public static void main(String[] args) {
+		
+	  String prova= ("VNET,NASDAQ,\"VIANET GROUP, INC.\",TECHNOLOGY,\" COMPUTER SOFTWARE : PROGRAMMING, DATA PROCESSING\"");
+		
+	  System.out.println(processString (prova));
+		
+	}*/
 	
 
   public String processString (String text)	{
 	  
 	    String[] fields= text.split(",");
-		String ticker= fields[TICKER];
+		String ticker= fields[0];
 		String sector= fields[fields.length-2];
 		String industry=fields[fields.length-1];
 		String result = null;
@@ -45,7 +53,7 @@ public class Parser
 		
 		
 				
-			 return result= ticker + "," + fields[NAME] + "," + sector ;
+			 return result= ticker + "," + fields[2] + "," + sector ;
 			 	
   }
   

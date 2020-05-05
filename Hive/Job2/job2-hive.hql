@@ -36,15 +36,17 @@ FROM jAll D JOIN  minMaxDate M ON(D.ticker = M.ticker AND  D.data = M.datapiurec
 
 CREATE TABLE IF NOT EXISTS variazioneAnnualeM AS
 SELECT va.sector, va.year, AVG(variazione) AS varazioneAnnualeMedia FROM
- (SELECT DISTINCT FC.ticker, FC.sector, FC.name, FC.year, round((LC.close/FC.close)*100-100,0) AS variazione
-  FROM firstClose FC JOIN lastClose LC ON(FC.ticker=LC.ticker AND FC.name=LC.name AND FC.year=LC.year AND FC.sector=LC.sector)) AS va
+ (SELECT v.sector,v.year,v.name,AVG(variazioneAT) AS variazione FROM
+  (SELECT DISTINCT FC.ticker, FC.sector, FC.name, FC.year, round((LC.close/FC.close)*100-100,0) AS variazioneAT
+   FROM firstClose FC JOIN lastClose LC ON(FC.ticker=LC.ticker AND FC.name=LC.name AND FC.year=LC.year AND FC.sector=LC.sector)) AS v
+  GROUP BY v.sector, v.year, v.name) AS va
 GROUP BY va.sector, va.year; 
 
 CREATE TABLE IF NOT EXISTS quotazioneGiornalieraM AS
 SELECT va.sector,va.year, AVG(quotazioneGiornalieraMediaA) AS quotazioneGiornalieraMediaS FROM
- (SELECT sector,year,name, AVG(close) AS quotazioneGiornalieraMediaA 
-  FROM jAll
-  GROUP BY sector,year,name) AS va
+   (SELECT sector,year,name, AVG(close) AS quotazioneGiornalieraMediaA 
+    FROM jAll
+    GROUP BY sector,year,name) AS va
 GROUP BY va.sector,va.year; 
 
 CREATE TABLE IF NOT EXISTS job2  AS
