@@ -15,25 +15,18 @@ public class JoinStocksMapper extends Mapper<Object, Text, Text, Text> {
 	}
 
 	private final int SYMBOL = 0;
-	private final int NAME = 1;
-	private final int SECTOR = 2;
+	private final int NAME = 2;
+	private final int SECTOR = 3;
 
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
-		Parser parser = new Parser();
-		String input = parser.processString(value.toString());
+		String[] campi = value.toString().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
-		if (input != null) {
-			String[] campi = input.split(",");
+		if (campi.length == 5) {
 
-			if (campi.length == 3) {
-
-				context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[SECTOR] + "," + campi[NAME]));
-			}
-
-		
+			context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[SECTOR] + "," + campi[NAME]));
 		}
-		
+
 		else {
 			context.getCounter(COUNTERS1.INVALID_RECORD_COUNT_JOB1).increment(1L);
 		}
