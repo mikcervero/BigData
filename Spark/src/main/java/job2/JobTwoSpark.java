@@ -40,11 +40,8 @@ public class JobTwoSpark {
 		}
 		
 		Dataset<String> historical_stocks_parse= spark.createDataset(rowParse, Encoders.STRING());
-		//Dataset<String> historical_stock_prices= spark.read().textFile(args[0]);
 		
-		
-		
-		
+	
 		
 		JavaRDD<String> historical_stock_prices = spark.read().textFile(args[0]).javaRDD();
 		JavaRDD<String[]> wordHistorical_stock_prices = historical_stock_prices.map(s -> COMMA.split(s)).filter(x -> x.length==8);
@@ -53,16 +50,19 @@ public class JobTwoSpark {
 		
 		JavaRDD<String> stocks_parse = historical_stocks_parse.javaRDD();
 		JavaRDD<String[]>wordStocks_parse= stocks_parse.map(s -> COMMA.split(s)).filter(x -> x.length==3);
-		JavaPairRDD<String,String[]> keyValue_stocks_parse= wordStocks_parse.mapToPair(line -> new Tuple2<>(line[0], new String[] {line[1],line[1]}));
+		JavaPairRDD<String,String[]> keyValue_stocks_parse= wordStocks_parse.mapToPair(line -> new Tuple2<>(line[0], new String[] {line[1],line[2]}));
 		
+		JavaPairRDD<String, Tuple2<String[],String[]>> risultato=keyValue_historical_stock_prices.join(keyValue_stocks_parse);
 		
+		//JavaPairRDD<String,String[]>risultato= datasetJoin.
 		
+		risultato.saveAsTextFile("/home/micol/sparkresult.txt");
 		
 		
 		//JavaRDD<String[]> wordsSecond = secondDataset.map(s -> COMMA.split(s)).filter(x -> x.length==3);
 		
 		
-		
+		spark.stop();
 		
 		
 		
