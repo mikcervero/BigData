@@ -22,7 +22,7 @@ public class JoinStocksMapper extends Mapper<Object, Text, Text, Text> {
 
 		String[] campi = value.toString().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
-		if (campi.length == 5) {
+		if (campi.length == 5 && !campi[SECTOR].equals("N/A")) {
 
 			context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[SECTOR] + "," + campi[NAME]));
 		}
