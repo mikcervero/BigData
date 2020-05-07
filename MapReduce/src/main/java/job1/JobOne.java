@@ -119,7 +119,7 @@ public class JobOne {
 					.round(((prezzoChiusuraFinale - prezzoChiusuraIniziale) / prezzoChiusuraIniziale) * 100);
 
 			Text result = new Text(
-					" " + variazioneQuotazione + " " + minPrezzo + " " + maxPrezzo + " " + averageVolume);
+					"    " + variazioneQuotazione + "    " + minPrezzo + "    " + maxPrezzo + "    " + averageVolume);
 			context.write(new Text(ActionSymbolId), result);
 		}
 	}

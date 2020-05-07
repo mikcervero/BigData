@@ -3,7 +3,7 @@ DROP TABLE if exists richiestaA;
 DROP TABLE if exists minMaxDate;
 DROP TABLE if exists firstClose;
 DROP TABLE if exists lastClose;
-DROP TABLE if exists variazioneAnnualeMedia;
+DROP TABLE if exists variazioneAnnualeM;
 DROP TABLE if exists quotazioneGiornalieraM;
 DROP TABLE if exists job2;
 
@@ -22,31 +22,29 @@ GROUP BY pr.sector,pr.year;
 
 
 CREATE TABLE IF NOT EXISTS minMaxDate AS
-SELECT ticker, name, sector, year, MIN(data) as datamenorecente, MAX(data) as datapiurecente
+SELECT ticker, sector, year, MIN(data) as datamenorecente, MAX(data) as datapiurecente
 FROM jAll
-GROUP BY ticker, name, year, sector;
+GROUP BY ticker, year, sector;
 
 CREATE TABLE IF NOT EXISTS firstClose AS
-SELECT DISTINCT D.ticker,D.sector, M.name, D.close, M.year
-FROM jAll D  JOIN  minMaxDate M ON(D.ticker = M.ticker AND  D.data = M.datamenorecente AND D.name=M.name AND D.year=M.year AND D.sector=M.sector);
+SELECT DISTINCT D.ticker,D.sector, D.close, M.year
+FROM jAll D  JOIN  minMaxDate M ON(D.ticker = M.ticker AND  D.data = M.datamenorecente  AND D.year=M.year AND D.sector=M.sector);
 
 CREATE TABLE IF NOT EXISTS lastClose AS
-SELECT DISTINCT D.ticker,D.sector, M.name, D.close, M.year
-FROM jAll D JOIN  minMaxDate M ON(D.ticker = M.ticker AND  D.data = M.datapiurecente AND D.name=M.name AND D.sector=M.sector);
+SELECT DISTINCT D.ticker,D.sector, D.close, M.year
+FROM jAll D JOIN  minMaxDate M ON(D.ticker = M.ticker AND  D.data = M.datapiurecente AND D.sector=M.sector);
 
 CREATE TABLE IF NOT EXISTS variazioneAnnualeM AS
 SELECT va.sector, va.year, AVG(variazione) AS varazioneAnnualeMedia FROM
- (SELECT v.sector,v.year,v.name,AVG(variazioneAT) AS variazione FROM
-  (SELECT DISTINCT FC.ticker, FC.sector, FC.name, FC.year, round((LC.close/FC.close)*100-100,0) AS variazioneAT
-   FROM firstClose FC JOIN lastClose LC ON(FC.ticker=LC.ticker AND FC.name=LC.name AND FC.year=LC.year AND FC.sector=LC.sector)) AS v
-  GROUP BY v.sector, v.year, v.name) AS va
+  (SELECT DISTINCT FC.ticker, FC.sector, FC.year, round((LC.close/FC.close)*100-100,0) AS variazione
+   FROM firstClose FC JOIN lastClose LC ON(FC.ticker=LC.ticker AND FC.year=LC.year AND FC.sector=LC.sector)) AS va
 GROUP BY va.sector, va.year; 
 
 CREATE TABLE IF NOT EXISTS quotazioneGiornalieraM AS
 SELECT va.sector,va.year, AVG(quotazioneGiornalieraMediaA) AS quotazioneGiornalieraMediaS FROM
-   (SELECT sector,year,name, AVG(close) AS quotazioneGiornalieraMediaA 
+   (SELECT sector,year,ticker, AVG(close) AS quotazioneGiornalieraMediaA 
     FROM jAll
-    GROUP BY sector,year,name) AS va
+    GROUP BY sector,year,ticker) AS va
 GROUP BY va.sector,va.year; 
 
 CREATE TABLE IF NOT EXISTS job2  AS
