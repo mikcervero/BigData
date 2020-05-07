@@ -13,7 +13,6 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 	private final int VOLUME = 2;
 	private final int DATE = 4;
 	private final int CLOSE = 3;
-	private final int NAME = 1;
 	private final int TICKER = 0;
 
 	public void reduce(Text sectoryear, Iterable<Text> values, Context context)
@@ -24,11 +23,14 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		Map<String, Integer> tickerdatemax = new HashMap<String, Integer>();
 		Map<String, Double> tickerCI = new HashMap<String, Double>();
 		Map<String, Double> tickerCF = new HashMap<String, Double>();
-
+		Map<String, Integer> variazioneAnnuale = new HashMap<String, Integer>();
 
 		long numberOfRecord = 0;
 		long sumVolume = 0;
 		double averageVolume = 0;
+		int vaForTicker=0;
+		int sumVa=0;
+		
 		
 
 		for (Text value : values) {
@@ -55,7 +57,7 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 				
 				if (tickerdatemin.get(ticker) > date ) {
 					tickerdatemin.replace(ticker, date);
-					tickerCI.put(ticker, close);
+					tickerCI.replace(ticker, close);
 				}
 				
 				else {
@@ -68,14 +70,16 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 					
 					if (tickerdatemax.get(ticker) < date ) {
 						tickerdatemax.replace(ticker, date);
-						tickerCF.put(ticker, close);
+						tickerCF.replace(ticker, close);
 					}
+				}
 					
 					else {
 						tickerdatemax.put(ticker,date);
 						tickerCF.put(ticker, close);
 					}
-				}
+				
+				
 			
 			
 			
@@ -84,6 +88,19 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 			
 			
 		}
+		
+		for (String ticker : tickerCF.keySet()) {
+			
+			double chiusuraIniziale= tickerCI.get(ticker);
+			double chiusuraFinale= tickerCF.get(ticker);
+			vaForTicker =  (int) Math.round(((chiusuraFinale - chiusuraIniziale) / chiusuraIniziale) * 100); 
+			variazioneAnnuale.put(ticker, vaForTicker);
+			
+		}
+		
+		
+		
+		
 		//float allVolumesSum = 0;
 		for (long volume : tickervolume.values()) {
 			sumVolume += volume;
