@@ -1,4 +1,4 @@
-package job2;
+package job3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.apache.spark.sql.SparkSession;
 import Parser.Parser;
 import scala.Tuple2;
 
-public class JobTwoSpark {
+public class JobThreeSpark {
 	
 	private static final Pattern COMMA = Pattern.compile(",");
 	private static final Pattern DASH = Pattern.compile("-");
