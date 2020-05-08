@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Mapper.Context;
 
 public class MapperTwo extends Mapper <Object, Text, Text, Text>{
 	

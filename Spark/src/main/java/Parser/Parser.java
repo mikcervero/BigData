@@ -10,8 +10,7 @@ public class Parser
 	
 	public Parser() {};
 	
-	 
-	
+ 
 
   public String processString (String text)	{
 	  
@@ -38,10 +37,6 @@ public class Parser
 			fields[2]=fields[2].replace('"', ' ');
 			fields[3]=fields[3].replace('"', ' ');
 			fields[2]=fields[2]+fields[3];
-	   
-		
-			
-	        return result= ticker + "," + fields[2] + "," + sector ;
 	        
 		}
 		
