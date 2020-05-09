@@ -67,8 +67,8 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
             if(tickerdatemin.containsKey(ticker)) {
 				
 				if (tickerdatemin.get(ticker) > millisecondDate ) {
-					tickerdatemin.replace(ticker, millisecondDate);
-					tickerCI.replace(ticker, close);
+					tickerdatemin.put(ticker, millisecondDate);
+					tickerCI.put(ticker, close);
 				}
 				
             }
@@ -82,8 +82,8 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 				if(tickerdatemax.containsKey(ticker)) {
 					
 					if (tickerdatemax.get(ticker) < millisecondDate ) {
-						tickerdatemax.replace(ticker, millisecondDate);
-						tickerCF.replace(ticker, close);
+						tickerdatemax.put(ticker, millisecondDate);
+						tickerCF.put(ticker, close);
 					}
 				}
 					

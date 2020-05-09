@@ -15,9 +15,8 @@ public class StocksMapper extends Mapper<Object, Text, Text, Text> {
 	}
 
 	private final int SYMBOL = 0;
-	private final int NAME = 2;
-	private final int SECTOR = 3;
-
+	private final int NAME = 1;
+	
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
 		Parser parser= new Parser();
@@ -32,7 +31,7 @@ public class StocksMapper extends Mapper<Object, Text, Text, Text> {
 
 		if (campi.length == 3 ) {
 
-			context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[SECTOR] + "," + campi[NAME]));
+			context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[NAME]));
 		}
 
 		else {

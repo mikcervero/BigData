@@ -3,18 +3,15 @@ package job3;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Reducer.Context;
 
-public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
+
+public class ReducerTrhee extends Reducer<Text, Text, Text, Text> {
 
 	
 	private final int CLOSE = 0;
@@ -112,5 +109,6 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		}
 		return dateFrm.getTime();
 	}
+ 
 
 }

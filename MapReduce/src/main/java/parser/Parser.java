@@ -1,6 +1,9 @@
 package parser;
 
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Parser 
 {
@@ -10,6 +13,7 @@ public class Parser
 	
 	public Parser() {};
 	
+
  
 
   public String processString (String text)	{
@@ -20,17 +24,22 @@ public class Parser
 		String industry=fields[fields.length-1];
 		String result = null;
 		
+		
+		
+        if(industry.indexOf('"')!=-1) {
+			
+			sector= fields[fields.length-3];
+		}
+		
+		
+		
+		
 		if(sector.equals("N/A")) {
 			
 			return result; 
 		}
 		
 		
-		
-		if(industry.indexOf('"')!=-1) {
-			
-			sector= fields[fields.length-3];
-		}
 		
 				
 		if(fields[2].indexOf('"')!=-1) {
