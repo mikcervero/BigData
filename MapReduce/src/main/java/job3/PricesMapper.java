@@ -13,8 +13,7 @@ public class PricesMapper extends Mapper<Object, Text, Text, Text> {
 	}
 
 	private final int SYMBOL = 0;
-	private final int PREZZOCHIUSURA = 2;
-	private final int VOLUME = 6;
+	private final int CLOSE = 2;
 	private final int DATE = 7;
 
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
@@ -28,10 +27,10 @@ public class PricesMapper extends Mapper<Object, Text, Text, Text> {
 
 			int anno = Integer.parseInt(data[0]);
 
-			if (anno >= 2008 && anno <= 2018) {
+			if (anno >= 2016 && anno <= 2018) {
 
 				context.write(new Text(campi[SYMBOL]),
-						new Text("prices" + "," + campi[PREZZOCHIUSURA] + "," + campi[VOLUME] + "," + campi[DATE]));
+						new Text("prices" + "," + campi[CLOSE] + "," + campi[DATE]));
 			}
 
 			

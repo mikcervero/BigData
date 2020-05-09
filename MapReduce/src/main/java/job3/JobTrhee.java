@@ -72,9 +72,39 @@ public class JobTrhee {
 		
 		job2.setReducerClass(ReducerTwo.class);
 		
+		Path aziendetrend = new Path("output/aziendetrend");
+
+		
+		FileOutputFormat.setOutputPath(job2, aziendetrend);
+		
+		job2.waitForCompletion(true);
+		
+		
+		//---------------JOB 3--------------
+		
+		Job job3 = new Job(conf, "Job3");
+		job3.setJarByClass(JobTrhee.class);
+		
+		FileInputFormat.addInputPath(job3, aziendetrend);
+		
+		job2.setMapperClass(MapperTrhee.class);
+		
+		job2.setOutputKeyClass(Text.class);
+		
+		job2.setOutputValueClass(Text.class);
+		
+		job2.setReducerClass(ReducerTrhee.class);
+		
+		
+
+		
 		FileOutputFormat.setOutputPath(job2, new Path(args[2]));
 		
 		job2.waitForCompletion(true);
+		
+		
+		
+		
 		
 		org.apache.hadoop.mapreduce.Counters counters = job1.getCounters();
 

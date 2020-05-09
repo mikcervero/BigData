@@ -5,7 +5,8 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class MapperTwo extends Mapper <Object, Text, Text, Text>{
+
+public class MapperTrhee extends Mapper <Object, Text, Text, Text>{
 	
 	private final int TICKER = 0;
 	private final int NAME = 1;
@@ -25,6 +26,6 @@ public class MapperTwo extends Mapper <Object, Text, Text, Text>{
 		
 		context.write(new Text(campi[NAME]+","+ campi[TICKER]), new Text(campi[CLOSE]+","+campi[DATE]+ ","+ anno));
 		
-	}
+	} 
 
 }
