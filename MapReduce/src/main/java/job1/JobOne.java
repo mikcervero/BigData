@@ -5,7 +5,15 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -68,7 +76,9 @@ public class JobOne {
 		private final int PREZZOMASSIMO = 2;
 		private final int VOLUME = 3;
 		private final int DATE = 4;
-
+		private Map<Text, Text> mappa = new HashMap<Text, Text>();
+		
+		
 		public void reduce(Text ActionSymbolId, Iterable<Text> values, Context context)
 				throws IOException, InterruptedException {
 
@@ -82,7 +92,7 @@ public class JobOne {
 			float averageVolume = 0;
 			int numberOfRecord = 0;
 			int variazioneQuotazione = 0;
-
+			
 			for (Text Actionvalues : values) {
 				String[] Avalue = Actionvalues.toString().split(",");
 				float prezzoMinimo = Float.parseFloat(Avalue[PREZZOMINIMO]);
@@ -118,11 +128,43 @@ public class JobOne {
 			variazioneQuotazione = Math
 					.round(((prezzoChiusuraFinale - prezzoChiusuraIniziale) / prezzoChiusuraIniziale) * 100);
 
-			Text result = new Text(
-					"    " + variazioneQuotazione + "    " + minPrezzo + "    " + maxPrezzo + "    " + averageVolume);
-			context.write(new Text(ActionSymbolId), result);
+			Text result = new Text(variazioneQuotazione + "," + minPrezzo + "," + maxPrezzo + "," + averageVolume);
+			mappa.put(new Text(ActionSymbolId), result);
 		}
+		
+		@Override
+		protected void cleanup(Context context) throws IOException, InterruptedException {
+			Map<Text, Text> sortedMap = sortByValues(mappa);
+			for (Text key : sortedMap.keySet()) {
+				context.write(key, sortedMap.get(key));
+			}
+			
+		}
+		
 	}
+	
+	  private static <K extends Comparable,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map){
+	        List<Map.Entry<K,V>> entries = new LinkedList<Map.Entry<K,V>>(map.entrySet());
+	     
+	        Collections.sort(entries, new Comparator<Map.Entry<K,V>>() {
+
+	            @Override
+	            public int compare(Entry<K, V> o1, Entry<K, V> o2) {
+	                return new Integer(o2.getValue().toString().split(",")[0]).compareTo(new Integer(o1.getValue().toString().split(",")[0]));
+	            }
+	        });
+	     
+
+	        Map<K,V> sortedMap = new LinkedHashMap<K,V>();
+	     
+	        for(Map.Entry<K,V> entry: entries){
+	            sortedMap.put(entry.getKey(), entry.getValue());
+	        }
+	     
+	        return sortedMap;
+	    }
+
+	
 
 	public static class JobOneMapper extends Mapper<Object, Text, Text, Text> {
 
