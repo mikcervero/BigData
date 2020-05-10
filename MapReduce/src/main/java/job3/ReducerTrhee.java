@@ -34,7 +34,7 @@ public class ReducerTrhee extends Reducer<Text, Text, Text, Text> {
 		   
 		if(aziende.size()>1)
 		
-			context.write(new Text(aziende.toString()), new Text("     2016:"+variazione[0]+"    2017:"+variazione[1]+"    2018:"+variazione[2]));
+			context.write(new Text(aziende.toString()), new Text("     2016:"+variazione[0]+"%"+"    2017:"+variazione[1]+"%"+"    2018:"+variazione[2]+"%"));
 	
 	
 	  }
