@@ -94,12 +94,11 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		    secondoValore=annoVariazione.get("2017");
 		    terzoValore=annoVariazione.get("2018");
 			
-		context.write(new Text(azienda), new Text( "    [" +primoValore+"%, "+ secondoValore+"%, "+terzoValore+"%]"));
+		context.write(new Text(azienda+","), new Text(primoValore+","+ secondoValore+","+terzoValore));
 		
 		}
 		
-		else 
-			context.write(new Text(azienda), new Text( "non contiene variazioni per tutti e tre gli anni"));
+		
 	}
 	
 	private long transformDate(String dataToTrasform) {

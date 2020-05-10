@@ -8,11 +8,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 public class MapperTrhee extends Mapper <Object, Text, Text, Text>{
 	
-	private final int TICKER = 0;
-	private final int NAME = 1;
-	private final int CLOSE = 2;
-	private final int DATE = 3;
 	
+	private final int NAME = 0;
+	private final int VARIAZIONE2016 = 1;
+	private final int VARIAZIONE2017 = 2;
+	private final int VARIAZIONE2018 = 3;
 	
 	
 	
@@ -22,9 +22,9 @@ public class MapperTrhee extends Mapper <Object, Text, Text, Text>{
 		
 		String[] campi = input.split(",");
 		
-		String anno = campi[DATE].split("-")[0];
 		
-		context.write(new Text(campi[NAME]+","+ campi[TICKER]), new Text(campi[CLOSE]+","+campi[DATE]+ ","+ anno));
+		
+		context.write(new Text(campi[VARIAZIONE2016]+","+campi[VARIAZIONE2017]+","+campi[VARIAZIONE2018]), new Text(campi[NAME]));
 		
 	} 
 

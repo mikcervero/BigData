@@ -87,20 +87,19 @@ public class JobTrhee {
 		
 		FileInputFormat.addInputPath(job3, aziendetrend);
 		
-		job2.setMapperClass(MapperTrhee.class);
+		job3.setMapperClass(MapperTrhee.class);
 		
-		job2.setOutputKeyClass(Text.class);
+		job3.setOutputKeyClass(Text.class);
 		
-		job2.setOutputValueClass(Text.class);
+		job3.setOutputValueClass(Text.class);
 		
-		job2.setReducerClass(ReducerTrhee.class);
-		
+		job3.setReducerClass(ReducerTrhee.class);
 		
 
 		
-		FileOutputFormat.setOutputPath(job2, new Path(args[2]));
+		FileOutputFormat.setOutputPath(job3, new Path(args[2]));
 		
-		job2.waitForCompletion(true);
+		job3.waitForCompletion(true);
 		
 		
 		

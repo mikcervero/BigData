@@ -1,9 +1,6 @@
 package parser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 public class Parser 
 {
@@ -14,12 +11,11 @@ public class Parser
 	public Parser() {};
 	
 
- 
 
   public String processString (String text)	{
 	  
 	    String[] fields= text.split(",");
-		String ticker= fields[0];
+		String ticker= fields[TICKER];
 		String sector= fields[fields.length-2];
 		String industry=fields[fields.length-1];
 		String result = null;
@@ -42,16 +38,16 @@ public class Parser
 		
 		
 				
-		if(fields[2].indexOf('"')!=-1) {
-			fields[2]=fields[2].replace('"', ' ');
+		if(fields[NAME].indexOf('"')!=-1) {
+			fields[NAME]=fields[2].replace('"', ' ');
 			fields[3]=fields[3].replace('"', ' ');
-			fields[2]=fields[2]+fields[3];
+			fields[NAME]=fields[2]+fields[3];
 	        
 		}
 		
 		
 				
-			 return result= ticker + "," + fields[2] + "," + sector ;
+			 return result= ticker + "," + fields[NAME] + "," + sector ;
 			 	
   }
   
