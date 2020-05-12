@@ -26,10 +26,10 @@ drop table if exists ordinatianno;
 
 create table ordinatianno as
 select * from
-	(select nome, avg(quotazione) as quotazione, anno from
+	(select i2.nome, avg(i2.quotazione) as quotazione, i2.anno from
 		(select ci.name as nome, round((cf.close/ci.close)*100-100,0) as quotazione, ci.anno as anno
-		from chiusurainiziale ci join chiusurafinale cf on ci.ticker = cf. ticker and ci.name = cf.name and ci.anno = cf.anno ) as intermediate2
-	group by intermediate2.nome, intermediate2.anno) as a
+		from chiusurainiziale ci join chiusurafinale cf on (ci.ticker = cf.ticker and ci.name = cf.name and ci.anno = cf.anno)) as i2
+	group by i2.nome, i2.anno) as a
 order by a.anno;
 
 drop table if exists intermediate3;
