@@ -26,20 +26,20 @@ drop table if exists ordinatianno;
 
 create table ordinatianno as
 select * from
-	(select i2.nome, avg(i2.quotazione) as quotazione, i2.anno from
-		(select ci.name as nome, round((cf.close/ci.close)*100-100,0) as quotazione, ci.anno as anno
+	(select i2.nome, avg(i2.variazioneAnnuale) as variazioneMedia, i2.anno from
+		(select ci.name as nome,ci.ticker,round((cf.close/ci.close)*100-100,0) as variazioneAnnuale, ci.anno as anno
 		from chiusurainiziale ci join chiusurafinale cf on (ci.ticker = cf.ticker and ci.name = cf.name and ci.anno = cf.anno)) as i2
 	group by i2.nome, i2.anno) as a
 order by a.anno;
 
 drop table if exists intermediate3;
 create table intermediate3 as
-select nome, concat_ws(',',collect_list(cast (quotazione as string))) as quotazione
+select nome, concat_ws(',',collect_list(cast (variazioneMedia as string))) as variazioneMedia
 from ordinatianno
 group by nome;
 
 drop table if exists job3;
 create table job3 as 
-select collect_set(nome), quotazione 
+select collect_set(nome), variazioneMedia
 from intermediate3 
 group by quotazione;
