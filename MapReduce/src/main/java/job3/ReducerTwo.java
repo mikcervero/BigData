@@ -31,7 +31,8 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		Map<String, Double> annoCI = new HashMap<String, Double>();
 		Map<String, Double> annoCF = new HashMap<String, Double>();
 		Map<String, Integer> annoVariazione = new HashMap<String, Integer>();
-		String azienda= aziendaticker.toString().split(",")[0];
+		//String azienda= aziendaticker.toString().split(",")[0];
+		//String ticker= aziendaticker.toString().split(",")[1];
 		int vaForTicker=0;
 		int primoValore=0;
 		int secondoValore=0;
@@ -94,7 +95,7 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		    secondoValore=annoVariazione.get("2017");
 		    terzoValore=annoVariazione.get("2018");
 			
-		context.write(new Text(azienda+","), new Text(primoValore+","+ secondoValore+","+terzoValore));
+		context.write(new Text(aziendaticker+","), new Text(primoValore+","+ secondoValore+","+terzoValore));
 		
 		}
 		
