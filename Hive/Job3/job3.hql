@@ -42,4 +42,4 @@ drop table if exists job3;
 create table job3 as 
 select collect_set(nome), variazioneMedia
 from intermediate3 
-group by quotazione;
+group by variazioneMedia;
