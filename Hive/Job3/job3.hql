@@ -1,3 +1,4 @@
+drop table if exists triennio;
 create table triennio as 
 select *
 from jall
