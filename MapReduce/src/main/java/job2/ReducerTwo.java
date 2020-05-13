@@ -27,17 +27,29 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		
 		// mappa contenente la somma di tutti i volumi di un ticker nell'anno, chiave ticker value somma
 		Map<String, Long> tickervolume = new HashMap<String, Long>();
+		
 		// mappa contenente come valori la data più remota di un ticker nell'anno e come chiave il ticker 
 		Map<String, Long> tickerdatemin = new HashMap<String, Long>();
+		
 		// mappa contenente come valori la data più recente di un ticker nell'anno e come chiave il ticker 
 		Map<String, Long> tickerdatemax = new HashMap<String, Long>();
-		// mappa contenente come valori il close di un ticker relativo alla data meno recente nell'anno e come chiave il ticker
+		
+		// mappa contenente come valori ivprezzi di chiusura di un ticker relativo alla data meno recente nell'anno e come chiave il ticker
 		Map<String, Double> tickerCI = new HashMap<String, Double>();
-		// mappa contenente come valori il close di un ticker relativo alla data più recente nell'anno e come chiave il ticker
+		
+		// mappa contenente come valori i prezzi di chiusura di un ticker relativo alla data più recente nell'anno e come chiave il ticker
 		Map<String, Double> tickerCF = new HashMap<String, Double>();
+		
+		// mappa contente la variazione annula relativa ad ogni ticker
 		Map<String, Integer> variazioneAnnuale = new HashMap<String, Integer>();
+		
+		// mappa contente la somma di tutti i valori prezzi di chiusura nell'anno di un ticker
 		Map<String, Double> tickersumclose = new HashMap<String, Double>();
+		
+		// mappa contente il numero dei prezzi di chiusura di un ticker nell'anno
 		Map<String, Integer> quantiCloseInTicker = new HashMap<String, Integer>();
+		
+		// mappa contente il prezzo di chiusura medio di un ticker nell'anno
 		Map<String, Double> tickerclosemedia = new HashMap<String, Double>();
 
 		long numberOfRecord = 0;
@@ -54,7 +66,7 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		for (Text value : values) {
 			String[] input = value.toString().split(",");
 			String ticker=input[TICKER];
-			// trasformo la data dal formato year-month-day in millise per facilitare il confronto
+			// trasformo la data dal formato year-month-day in millisecond per facilitare il confronto
 			long millisecondDate = transformDate(input[DATE]);
 			double close= Double.parseDouble(input[CLOSE]);
 			long volume = Long.parseLong(input[VOLUME]);
@@ -72,10 +84,11 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 
 			// se la mappa contiene già come chiave il ticker passato come parametro
             if(tickerdatemin.containsKey(ticker)) {
+            	
 				// se la data(valore) associata alla chiave ticker è maggiore della data tratta da value, viene aggiornata 
 				if (tickerdatemin.get(ticker) > millisecondDate ) {
 					tickerdatemin.put(ticker, millisecondDate);
-					// viene aggiornato anche il valore close presente in value 
+					// viene aggiornato anche il valore del prezzo di chiusura iniziale presente in value 
 					tickerCI.put(ticker, close);
 				}
 				
@@ -85,7 +98,7 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 					// altrimenti inserisco la nuova chiave con la relativa data
 					tickerdatemin.put(ticker,millisecondDate);
 					
-					// altrimenti inserisco la nuova chiave con il relativo close
+					// altrimenti inserisco la nuova chiave con il relativo prezzo di chiusura
 					tickerCI.put(ticker, close);
 				}
 			
@@ -96,7 +109,7 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 					if (tickerdatemax.get(ticker) < millisecondDate ) {
 						tickerdatemax.put(ticker, millisecondDate);
 						
-						// viene aggiornato anche il valore close presente in value 
+						// viene aggiornato anche il valore del prezzo di chiusura finale presente in value 
 						tickerCF.put(ticker, close);
 					}
 				}
@@ -105,23 +118,24 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 						// altrimenti inserisco la nuova chiave con la relativa data
 						tickerdatemax.put(ticker,millisecondDate);
 						
-						// altrimenti inserisco la nuova chiave con il relativo close
+						// altrimenti inserisco la nuova chiave con il relativo prezzo di chiusura
 						tickerCF.put(ticker, close);
 					}
 				
 				// se la mappa contiene già come chiave il ticker passato come parametro
 				if (tickersumclose.containsKey(ticker)) {
 					
-					//sommo al valore close , relativo alla chiave, il prezzo close tratto da value
+					//sommo al valore close , relativo alla chiave, il prezzo di chiusura tratto da value
 					tickersumclose.put(ticker, tickersumclose.get(ticker)+close);
 					
-					//aggiorno il valore della mappa che ad un ticker associa il numero dei close presenti nell'anno
+					//aggiorno il valore della mappa che ad un ticker associa il numero dei prezzi di chiusura presenti nell'anno
 					quantiCloseInTicker.put(ticker,quantiCloseInTicker.get(ticker)+1);
 				}
 				
 				else {
-					// altrimenti inserisco la nuova chiave con il relativa close
+					// altrimenti inserisco la nuova chiave con il relativo prezzo di chiusura 
 					tickersumclose.put(ticker,close);
+					
 					// altrimenti inserisco la nuova chiave e come valore inserisco 1
 					quantiCloseInTicker.put(ticker,1);
 				}
@@ -129,6 +143,7 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 			
 		}
 		
+		// per ogni ticker mi calcolo la variazione nell'anno e lo inserisco in una mappa 
 		for (String ticker : tickerCF.keySet()) {
 			
 			double chiusuraIniziale= tickerCI.get(ticker);
@@ -137,6 +152,9 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 			variazioneAnnuale.put(ticker, vaForTicker);
 			
 		}
+		
+		
+		// sommo tutte le variazioni(valori) presenti nella mappa per poi poter calcolare la media
 		
 		for (int varazione: variazioneAnnuale.values()) {
 			
@@ -148,6 +166,8 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		averageVa= sumVa/(variazioneAnnuale.keySet().size());
 		
 		
+		// per ogni ticker calcolo la media dei prezzi di chiusura nell'anno e la inserisco in una mappa con chiave ticker
+		
         for (String ticker : tickersumclose.keySet()) {
         	
         	double tickerCloseAverage= tickersumclose.get(ticker)/quantiCloseInTicker.get(ticker);
@@ -156,19 +176,25 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 			
 		}
         
+        // sommo i prezzi di chiusura medi di tutti ticker nell'anno 
+        
         for(double closeMedioTicker: tickerclosemedia.values()) {
         	SumClose+=closeMedioTicker;
         }
         
-        
+        // e ne calcolo la media
         averageClose= SumClose/(tickerclosemedia.keySet().size());
 		
 		
-		//float allVolumesSum = 0;
+		// effettuo una somma di tutti i valori presenti nella mappa
+        
 		for (long volume : tickervolume.values()) {
 			sumVolume += volume;
 		}
+		// e ne calcolo la media
 		double volumeAvg = sumVolume / (tickervolume.keySet().size());
+		
+		
 		context.write(sectoryear, new Text( "    " +volumeAvg + "    " + averageVa+"    "+ averageClose));
 
 	}

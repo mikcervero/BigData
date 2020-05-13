@@ -20,9 +20,10 @@ public class ReducerThree extends Reducer<Text, Text, Text, Text> {
 		
 		
 
-		
+		// lista delle aziende che hanno gli stessi valori di variazione annuale per un ticker
 		List<String> aziende= new ArrayList<String>();
 		List<String> tickers= new ArrayList<String>();
+		
 
 		for (Text value : values) {
 			
@@ -36,7 +37,7 @@ public class ReducerThree extends Reducer<Text, Text, Text, Text> {
 		String[]variazione=variazioni.toString().split(",");
 		
 	 
-		   
+		 // se le variazioni in chiave sono relative a più aziende vengono inserite nell'output
 		if(aziende.size()>1)
 		
 			context.write(new Text(aziende.toString()+"   "+ tickers.toString()), new Text("     2016:"+variazione[0]+"%"+"    2017:"+variazione[1]+"%"+"    2018:"+variazione[2]+"%"));

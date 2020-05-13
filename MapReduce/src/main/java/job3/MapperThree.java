@@ -24,7 +24,6 @@ public class MapperThree extends Mapper <Object, Text, Text, Text>{
 		String[] campi = input.split(",");
 		
 		
-		
 		context.write(new Text(campi[VARIAZIONE2016]+","+campi[VARIAZIONE2017]+","+campi[VARIAZIONE2018]), new Text(campi[NAME]+","+campi[TICKER]));
 		
 	} 

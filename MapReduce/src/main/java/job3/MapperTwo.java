@@ -21,8 +21,10 @@ public class MapperTwo extends Mapper <Object, Text, Text, Text>{
 		
 		String[] campi = input.split(",");
 		
+		// date nel formato year-month-day
 		String anno = campi[DATE].split("-")[0];
 		
+		// chiave: nome dell'azienda e ticker a cui è associata 
 		context.write(new Text(campi[NAME]+","+ campi[TICKER]), new Text(campi[CLOSE]+","+campi[DATE]+ ","+ anno));
 		
 	}
