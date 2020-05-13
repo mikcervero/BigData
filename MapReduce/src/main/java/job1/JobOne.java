@@ -72,10 +72,8 @@ public class JobOne {
 	public static class JobOneReducer extends Reducer<Text, Text, Text, Text> {
 
 		private final int PREZZOCHIUSURA = 0;
-		private final int PREZZOMINIMO = 1;
-		private final int PREZZOMASSIMO = 2;
-		private final int VOLUME = 3;
-		private final int DATE = 4;
+		private final int VOLUME = 1;
+		private final int DATE = 2;
 		private Map<Text, Text> mappa = new HashMap<Text, Text>();
 		
 		
@@ -95,19 +93,17 @@ public class JobOne {
 			
 			for (Text Actionvalues : values) {
 				String[] Avalue = Actionvalues.toString().split(",");
-				float prezzoMinimo = Float.parseFloat(Avalue[PREZZOMINIMO]);
-				float prezzoMassimo = Float.parseFloat(Avalue[PREZZOMASSIMO]);
 				long volume = Long.parseLong(Avalue[VOLUME]);
 				long date = Long.parseLong(Avalue[DATE]);
 				float prezzoChiusura = Float.parseFloat(Avalue[PREZZOCHIUSURA]);
 
 				numberOfRecord++;
 
-				if (prezzoMinimo <= minPrezzo) {
-					minPrezzo = prezzoMinimo;
+				if (prezzoChiusura <= minPrezzo) {
+					minPrezzo = prezzoChiusura;
 				}
-				if (prezzoMassimo >= maxPrezzo) {
-					maxPrezzo = prezzoMassimo;
+				if (prezzoChiusura >= maxPrezzo) {
+					maxPrezzo = prezzoChiusura;
 				}
 
 				sumVolume += volume;
@@ -170,8 +166,6 @@ public class JobOne {
 
 		private final int SYMBOL = 0;
 		private final int PREZZOCHIUSURA = 2;
-		private final int PREZZOMINIMO = 4;
-		private final int PREZZOMASSIMO = 5;
 		private final int VOLUME = 6;
 		private final int DATE = 7;
 
@@ -190,8 +184,7 @@ public class JobOne {
 
 					long millisecondDate = transformDate(campi[DATE]);
 
-					context.write(new Text(campi[SYMBOL]), new Text(campi[PREZZOCHIUSURA] + "," + campi[PREZZOMINIMO]
-							+ "," + campi[PREZZOMASSIMO] + "," + campi[VOLUME] + "," + millisecondDate));
+					context.write(new Text(campi[SYMBOL]), new Text(campi[PREZZOCHIUSURA] + "," + campi[VOLUME] + "," + millisecondDate));
 				}
 			}
 
