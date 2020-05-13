@@ -19,7 +19,7 @@ CREATE TEMPORARY FUNCTION Parser AS 'Hive.Parser.Parser';
 DROP TABLE if exists historicalStocks;
 
 CREATE TABLE historicalStocks as 
-SELECT Parser(stockRow) as (ticker,name,sector)
+SELECT Parser(stockRow) as (ticker,name)
 FROM historicalStocksRow;
 
 
