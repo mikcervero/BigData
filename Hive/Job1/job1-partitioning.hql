@@ -32,9 +32,9 @@ INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2014) SELECT ticker, 
 
 INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2015) SELECT ticker, close,  volume, month, day FROM tmp where year='2015';
 
-INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2016) SELECT ticker, open, close,  volume, month, day FROM tmp where year='2016';
+INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2016) SELECT ticker, close,  volume, month, day FROM tmp where year='2016';
 
-INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2017) SELECT ticker, open, close,  volume, month, day FROM tmp where year='2017';
+INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2017) SELECT ticker, close,  volume, month, day FROM tmp where year='2017';
 
-INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2018) SELECT ticker, open, close,  volume, month, day FROM tmp where year='2018';
+INSERT OVERWRITE TABLE stock_prices_byYear PARTITION (year=2018) SELECT ticker, close,  volume, month, day FROM tmp where year='2018';
 
