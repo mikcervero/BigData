@@ -15,14 +15,22 @@ public class StocksMapper extends Mapper<Object, Text, Text, Text> {
 	}
 
 	private final int SYMBOL = 0;
-	private final int NAME = 2;
-	private final int SECTOR = 3;
+	private final int NAME = 1;
+	private final int SECTOR = 2;
 
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
-		String[] campi = value.toString().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+		Parser parser = new Parser();
+		String[] campi = {};
+		String row = parser.processString(value.toString());
 
-		if (campi.length == 5 && !campi[SECTOR].equals("N/A")) {
+		if (row != null) {
+
+			campi = row.split(",");
+
+		}
+
+		if (campi.length == 3) {
 
 			context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[SECTOR] + "," + campi[NAME]));
 		}
