@@ -13,7 +13,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 
-public class ReducerTrhee extends Reducer<Text, Text, Text, Text> {	
+public class ReducerThree extends Reducer<Text, Text, Text, Text> {	
 
 	public void reduce(Text variazioni, Iterable<Text> values, Context context)
 			throws IOException, InterruptedException {

@@ -6,7 +6,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 
-public class MapperTrhee extends Mapper <Object, Text, Text, Text>{
+public class MapperThree extends Mapper <Object, Text, Text, Text>{
 	
 	
 	private final int NAME = 0;

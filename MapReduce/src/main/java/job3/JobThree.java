@@ -23,7 +23,7 @@ import job2.PricesMapper.COUNTERS2;
 
 
 
-public class JobTrhee {
+public class JobThree {
 
 	public static void main(String[] args) throws Exception {
 
@@ -38,7 +38,7 @@ public class JobTrhee {
 		
 		
 		Job job1 = new Job(conf, "Job1");
-		job1.setJarByClass(JobTrhee.class);
+		job1.setJarByClass(JobThree.class);
 
 		MultipleInputs.addInputPath(job1, new Path(args[0]), TextInputFormat.class, StocksMapper.class);
 
@@ -60,7 +60,7 @@ public class JobTrhee {
 		//------------JOB 2---------------
 		
 		Job job2 = new Job(conf, "Job2");
-		job2.setJarByClass(JobTrhee.class);
+		job2.setJarByClass(JobThree.class);
 		
 		FileInputFormat.addInputPath(job2, joinoutput);
 		
@@ -83,17 +83,17 @@ public class JobTrhee {
 		//---------------JOB 3--------------
 		
 		Job job3 = new Job(conf, "Job3");
-		job3.setJarByClass(JobTrhee.class);
+		job3.setJarByClass(JobThree.class);
 		
 		FileInputFormat.addInputPath(job3, aziendetrend);
 		
-		job3.setMapperClass(MapperTrhee.class);
+		job3.setMapperClass(MapperThree.class);
 		
 		job3.setOutputKeyClass(Text.class);
 		
 		job3.setOutputValueClass(Text.class);
 		
-		job3.setReducerClass(ReducerTrhee.class);
+		job3.setReducerClass(ReducerThree.class);
 		
 
 		
