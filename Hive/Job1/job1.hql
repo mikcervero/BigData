@@ -1,7 +1,7 @@
 drop table if exists data_stock_prices_byyear;
 
 create table data_stock_prices_byyear as
-select ticker, close, adj_close, lowThe, highThe, volume, to_date(concat(year,'-',month,'-',day)) as data
+select ticker, close,  volume, to_date(concat(year,'-',month,'-',day)) as data
 from stock_prices_byyear;
 
 drop table if exists intermediate;
@@ -26,7 +26,7 @@ from data_stock_prices_byyear d join intermediate i on d.ticker = i.ticker and d
 drop table if exists intermediate2;
 
 create table intermediate2 as
-select ticker, MIN(lowThe) as prezzominimo, MAX(highThe) as prezzomassimo, AVG(volume) as mediavolume
+select ticker, MIN(close) as prezzominimo, MAX(close) as prezzomassimo, AVG(volume) as mediavolume
 from data_stock_prices_byyear
 group by ticker;
 
