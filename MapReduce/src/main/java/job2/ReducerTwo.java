@@ -24,10 +24,16 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text sectoryear, Iterable<Text> values, Context context)
 			throws IOException, InterruptedException {
 
+		
+		// mappa contenente la somma di tutti i volumi di un ticker nell'anno, chiave ticker value somma
 		Map<String, Long> tickervolume = new HashMap<String, Long>();
+		// mappa contenente come valori la data più remota di un ticker nell'anno e come chiave il ticker 
 		Map<String, Long> tickerdatemin = new HashMap<String, Long>();
+		// mappa contenente come valori la data più recente di un ticker nell'anno e come chiave il ticker 
 		Map<String, Long> tickerdatemax = new HashMap<String, Long>();
+		// mappa contenente come valori il close di un ticker relativo alla data meno recente nell'anno e come chiave il ticker
 		Map<String, Double> tickerCI = new HashMap<String, Double>();
+		// mappa contenente come valori il close di un ticker relativo alla data più recente nell'anno e come chiave il ticker
 		Map<String, Double> tickerCF = new HashMap<String, Double>();
 		Map<String, Integer> variazioneAnnuale = new HashMap<String, Integer>();
 		Map<String, Double> tickersumclose = new HashMap<String, Double>();
@@ -48,57 +54,75 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		for (Text value : values) {
 			String[] input = value.toString().split(",");
 			String ticker=input[TICKER];
+			// trasformo la data dal formato year-month-day in millise per facilitare il confronto
 			long millisecondDate = transformDate(input[DATE]);
 			double close= Double.parseDouble(input[CLOSE]);
 			long volume = Long.parseLong(input[VOLUME]);
 		
-			
-			//numberOfRecord++;
-		//	sumVolume += volume;
+            // se la mappa tickervolume contiene la chiave ticker, sommo al valore, relativo alla chiave, il volume tratto da value 
 			
 			if (tickervolume.containsKey(ticker)) {
 				tickervolume.put(ticker, tickervolume.get(ticker)+volume);
 			}
+			
+			// altrimenti inserisco la nuova chiave con il relativo valore 
 			else {
 				tickervolume.put(ticker,volume);
 			}
 
-			
+			// se la mappa contiene già come chiave il ticker passato come parametro
             if(tickerdatemin.containsKey(ticker)) {
-				
+				// se la data(valore) associata alla chiave ticker è maggiore della data tratta da value, viene aggiornata 
 				if (tickerdatemin.get(ticker) > millisecondDate ) {
 					tickerdatemin.put(ticker, millisecondDate);
+					// viene aggiornato anche il valore close presente in value 
 					tickerCI.put(ticker, close);
 				}
 				
             }
-				
+            
 				else {
+					// altrimenti inserisco la nuova chiave con la relativa data
 					tickerdatemin.put(ticker,millisecondDate);
+					
+					// altrimenti inserisco la nuova chiave con il relativo close
 					tickerCI.put(ticker, close);
 				}
 			
-				
+                // se la mappa contiene già come chiave il ticker passato come parametro
 				if(tickerdatemax.containsKey(ticker)) {
 					
+					// se la data(valore) associata alla chiave ticker è minore della data tratta da value, viene aggiornata 
 					if (tickerdatemax.get(ticker) < millisecondDate ) {
 						tickerdatemax.put(ticker, millisecondDate);
+						
+						// viene aggiornato anche il valore close presente in value 
 						tickerCF.put(ticker, close);
 					}
 				}
 					
 					else {
+						// altrimenti inserisco la nuova chiave con la relativa data
 						tickerdatemax.put(ticker,millisecondDate);
+						
+						// altrimenti inserisco la nuova chiave con il relativo close
 						tickerCF.put(ticker, close);
 					}
 				
-				
+				// se la mappa contiene già come chiave il ticker passato come parametro
 				if (tickersumclose.containsKey(ticker)) {
+					
+					//sommo al valore close , relativo alla chiave, il prezzo close tratto da value
 					tickersumclose.put(ticker, tickersumclose.get(ticker)+close);
+					
+					//aggiorno il valore della mappa che ad un ticker associa il numero dei close presenti nell'anno
 					quantiCloseInTicker.put(ticker,quantiCloseInTicker.get(ticker)+1);
 				}
+				
 				else {
+					// altrimenti inserisco la nuova chiave con il relativa close
 					tickersumclose.put(ticker,close);
+					// altrimenti inserisco la nuova chiave e come valore inserisco 1
 					quantiCloseInTicker.put(ticker,1);
 				}
 			
