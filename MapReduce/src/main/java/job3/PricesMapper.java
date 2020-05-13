@@ -28,9 +28,8 @@ public class PricesMapper extends Mapper<Object, Text, Text, Text> {
 			int anno = Integer.parseInt(data[0]);
 
 			if (anno >= 2016 && anno <= 2018) {
-
-				context.write(new Text(campi[SYMBOL]),
-						new Text("prices" + "," + campi[CLOSE] + "," + campi[DATE]));
+				//prices permette di distinguere il dataset di provenienza nel join
+				context.write(new Text(campi[SYMBOL]), new Text("prices" + "," + campi[CLOSE] + "," + campi[DATE]));
 			}
 
 			

@@ -19,7 +19,9 @@ public class JoinReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text ActionSymbolId, Iterable<Text> values, Context context)
 			throws IOException, InterruptedException {
 
+		//lista contenente i record del dataset historical_stocks
 		List<String[]> stocks = new ArrayList<String[]>();
+		//lista contenente i record del dataset historical_stock_prices
 		List<String[]> prices = new ArrayList<String[]>();
 
 		for (Text value : values) {
@@ -35,7 +37,8 @@ public class JoinReducer extends Reducer<Text, Text, Text, Text> {
 				prices.add(campi);
 			}
 		}
-
+		
+		//implementazione join
 		for (String[] stock : stocks) {
 
 			for (String[] price : prices) {

@@ -31,7 +31,7 @@ public class StocksMapper extends Mapper<Object, Text, Text, Text> {
 		}
 
 		if (campi.length == 3) {
-
+			//stocks permette di distinguere il dataset di provenienza nel join
 			context.write(new Text(campi[SYMBOL]), new Text("stocks" + "," + campi[SECTOR] + "," + campi[NAME]));
 		}
 
