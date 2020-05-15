@@ -124,7 +124,7 @@ public class JobOne {
 			variazioneQuotazione = Math
 					.round(((prezzoChiusuraFinale - prezzoChiusuraIniziale) / prezzoChiusuraIniziale) * 100);
 
-			Text result = new Text(variazioneQuotazione+ "," + minPrezzo + "," + maxPrezzo + "," + averageVolume);
+			Text result = new Text("    " +variazioneQuotazione+ "    " + minPrezzo + "    " + maxPrezzo + "    " + averageVolume);
 			mappa.put(new Text(ActionSymbolId), result);
 		}
 		
@@ -144,9 +144,9 @@ public class JobOne {
 	     
 	        Collections.sort(entries, new Comparator<Map.Entry<K,V>>() {
 
-	            @Override
+	           
 	            public int compare(Entry<K, V> o1, Entry<K, V> o2) {
-	                return new Integer(o2.getValue().toString().split(",")[0]).compareTo(new Integer(o1.getValue().toString().split(",")[0]));
+	                return new Integer(o2.getValue().toString().split("    ")[1]).compareTo(new Integer(o1.getValue().toString().split( "    " )[1]));
 	            }
 	        });
 	     
