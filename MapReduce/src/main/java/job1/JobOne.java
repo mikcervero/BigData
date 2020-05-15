@@ -124,7 +124,7 @@ public class JobOne {
 			variazioneQuotazione = Math
 					.round(((prezzoChiusuraFinale - prezzoChiusuraIniziale) / prezzoChiusuraIniziale) * 100);
 
-			Text result = new Text(variazioneQuotazione+"%" + "," + minPrezzo + "," + maxPrezzo + "," + averageVolume);
+			Text result = new Text(variazioneQuotazione+ "," + minPrezzo + "," + maxPrezzo + "," + averageVolume);
 			mappa.put(new Text(ActionSymbolId), result);
 		}
 		
