@@ -102,7 +102,7 @@ public class JobThree {
 		job3.waitForCompletion(true);
 		
 		
-		
+		System.exit(0);
 		
 		
 		org.apache.hadoop.mapreduce.Counters counters = job1.getCounters();

@@ -71,6 +71,8 @@ public class JobTwo {
 		
 		job2.waitForCompletion(true);
 		
+		System.exit(0);
+		
 		org.apache.hadoop.mapreduce.Counters counters = job1.getCounters();
 
 		long end = System.currentTimeMillis();
