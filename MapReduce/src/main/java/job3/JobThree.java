@@ -1,14 +1,6 @@
 package job3;
 
 
-
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -27,17 +19,17 @@ public class JobThree {
 
 	public static void main(String[] args) throws Exception {
 
-		long start = System.currentTimeMillis();
 
-		Configuration conf = new Configuration();
+	
 //		if (args.length != 2) {
 //			System.err.println("Usage: uniquelisteners <in> <out>");
 //			System.exit(2);
 
 		//---------------JOB 1--------------
 		
+		Configuration conf1 = new Configuration();
 		
-		Job job1 = new Job(conf, "Job1");
+		Job job1 = new Job(conf1, "Job1");
 		job1.setJarByClass(JobThree.class);
 
 		MultipleInputs.addInputPath(job1, new Path(args[0]), TextInputFormat.class, StocksMapper.class);
@@ -59,7 +51,9 @@ public class JobThree {
 		
 		//------------JOB 2---------------
 		
-		Job job2 = new Job(conf, "Job2");
+		Configuration conf2 = new Configuration();
+		
+		Job job2 = new Job(conf2, "Job2");
 		job2.setJarByClass(JobThree.class);
 		
 		FileInputFormat.addInputPath(job2, joinoutput);
@@ -82,7 +76,9 @@ public class JobThree {
 		
 		//---------------JOB 3--------------
 		
-		Job job3 = new Job(conf, "Job3");
+        Configuration conf3 = new Configuration();
+		
+		Job job3 = new Job(conf3, "Job3");
 		job3.setJarByClass(JobThree.class);
 		
 		FileInputFormat.addInputPath(job3, aziendetrend);
@@ -106,12 +102,6 @@ public class JobThree {
 		
 		
 		org.apache.hadoop.mapreduce.Counters counters = job1.getCounters();
-
-		long end = System.currentTimeMillis();
-
-		NumberFormat formatter = new DecimalFormat("#0.000");
-
-		System.out.println("Execution time is " + formatter.format((end - start) / 1000d / 60) + " min");
 
 		System.out.println(
 				"No. of Invalid Records :" + counters.findCounter(COUNTERS1.INVALID_RECORD_COUNT_JOB1).getValue() +" RIGHE INVALIDE MAPPER 1\t"

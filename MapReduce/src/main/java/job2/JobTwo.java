@@ -1,10 +1,5 @@
 package job2;
 
-
-
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -22,7 +17,7 @@ public class JobTwo {
 
 	public static void main(String[] args) throws Exception {
 
-		long start = System.currentTimeMillis();
+		
 
 		Configuration conf = new Configuration();
 //		if (args.length != 2) {
@@ -31,8 +26,9 @@ public class JobTwo {
 
 		//---------------JOB 1--------------
 		
+		Configuration conf1 = new Configuration();
 		
-		Job job1 = new Job(conf, "Job1");
+		Job job1 = new Job(conf1, "Job1");
 		job1.setJarByClass(JobTwo.class);
 
 		MultipleInputs.addInputPath(job1, new Path(args[0]), TextInputFormat.class, StocksMapper.class);
@@ -53,6 +49,8 @@ public class JobTwo {
 
 		
 		//------------JOB 2---------------
+		
+		Configuration conf2 = new Configuration();
 		
 		Job job2 = new Job(conf, "Job2");
 		job2.setJarByClass(JobTwo.class);
@@ -75,12 +73,7 @@ public class JobTwo {
 		
 		org.apache.hadoop.mapreduce.Counters counters = job1.getCounters();
 
-		long end = System.currentTimeMillis();
-
-		NumberFormat formatter = new DecimalFormat("#0.000");
-
-		System.out.println("Execution time is " + formatter.format((end - start) / 1000d / 60) + " min");
-
+		
 		System.out.println(
 				"No. of Invalid Records :" + counters.findCounter(COUNTERS1.INVALID_RECORD_COUNT_JOB1).getValue() +" RIGHE INVALIDE MAPPER 1\t"
 						+ counters.findCounter(COUNTERS2.INVALID_RECORD_COUNT_JOB2).getValue()+" RIGHE INVALIDE MAPPER 2");

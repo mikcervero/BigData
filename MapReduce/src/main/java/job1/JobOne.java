@@ -32,8 +32,7 @@ public class JobOne {
 
 	public static void main(String[] args) throws Exception {
 		
-		long start = System.currentTimeMillis();
-		
+	
 		Configuration conf = new Configuration();
 		if (args.length != 2) {
 			System.err.println("Usage: uniquelisteners <in> <out>");
@@ -59,12 +58,7 @@ public class JobOne {
 
 		org.apache.hadoop.mapreduce.Counters counters = job.getCounters();
 
-		long end = System.currentTimeMillis();
-
-		NumberFormat formatter = new DecimalFormat("#0.000");
-
-		System.out.println("Execution time is " + formatter.format((end - start) / 1000d / 60) + " min");
-
+		
 		System.out.println("No. of Invalid Records :" + counters.findCounter(COUNTERS.INVALID_RECORD_COUNT).getValue());
 
 	}
