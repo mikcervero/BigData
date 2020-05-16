@@ -90,31 +90,39 @@ public class JobOne {
 				long volume = Long.parseLong(Avalue[VOLUME]);
 				long date = Long.parseLong(Avalue[DATE]);
 				float prezzoChiusura = Float.parseFloat(Avalue[PREZZOCHIUSURA]);
-
+				
+				//conteggio record per media volume
 				numberOfRecord++;
-
+				
+				//aggiorno il prezzo minimo
 				if (prezzoChiusura <= minPrezzo) {
 					minPrezzo = prezzoChiusura;
 				}
+				
+				//aggiorno il prezzo massimo
 				if (prezzoChiusura >= maxPrezzo) {
 					maxPrezzo = prezzoChiusura;
 				}
 
 				sumVolume += volume;
-
+				
+				//aggiorno prezzo di chiusura iniziale
 				if (date < PrimaData) {
 					PrimaData = date;
 					prezzoChiusuraIniziale = prezzoChiusura;
 				}
-
+				
+				//agiorno prezzo di chiusura finale
 				if (date > UltimaData) {
 					UltimaData = date;
 					prezzoChiusuraFinale = prezzoChiusura;
 				}
 
 			}
-
+			
+			//calcolo media volume
 			averageVolume = sumVolume / numberOfRecord;
+			//calcolo quotazione
 			variazioneQuotazione = Math
 					.round(((prezzoChiusuraFinale - prezzoChiusuraIniziale) / prezzoChiusuraIniziale) * 100);
 
@@ -133,6 +141,7 @@ public class JobOne {
 		
 	}
 	
+	  //comparatore per ordinare i valori per quotazione decrescente
 	  private static <K extends Comparable,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map){
 	        List<Map.Entry<K,V>> entries = new LinkedList<Map.Entry<K,V>>(map.entrySet());
 	     
@@ -178,6 +187,7 @@ public class JobOne {
 
 					long millisecondDate = transformDate(campi[DATE]);
 
+					//chiave il ticker, valore chiusura, volume, data
 					context.write(new Text(campi[SYMBOL]), new Text(campi[PREZZOCHIUSURA] + "," + campi[VOLUME] + "," + millisecondDate));
 				}
 			}

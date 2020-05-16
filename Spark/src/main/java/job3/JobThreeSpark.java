@@ -34,7 +34,7 @@ public class JobThreeSpark {
 
 		SparkSession spark = SparkSession
 				.builder()
-				.appName("JobTwo")
+				.appName("JobThree")
 				.getOrCreate();
 		
 		JavaRDD<String> line1 = spark.read().textFile(file1).javaRDD();
@@ -55,18 +55,18 @@ public class JobThreeSpark {
 		//ticker, nome, chiusura, data, anno      
 		JavaRDD<String[]> joinresult = join.map(couple -> new String[] { couple._1(), couple._2()._1[0], couple._2()._2[0], couple._2()._2[1], couple._2()._2[2]});
 	
-		//ticker, nome, anno          chiusura data
+		//(ticker, nome, anno   ->       chiusura data)
 		JavaPairRDD<String , Double[]> tupla = joinresult.mapToPair(x -> new Tuple2<>(x[0]+","+ x[1]+","+x[4], new Double[] {Double.parseDouble(x[2]), transformDate(x[3])}));
 		
-		//ticker, nome, anno         chiusuriniziale, chiusurafinale    
+		//(ticker, nome, anno    ->     chiusuriniziale, chiusurafinale)    
 		JavaPairRDD<String, Double[]> agg = tupla.reduceByKey((x,y) -> new Double[] {chiusurainiziale(x[0], y[0], x[1], y[1]), chiusurafinale(x[0], y[0], x[1], y[1])});
 	
 		
 			
-//	    ticker,nome,anno                   quotazione   
+	    //ticker,nome,anno,quotazione   
 		JavaRDD<String[]> risultato = agg.map(couple -> new String[] {couple._1().split(",")[0], couple._1().split(",")[1], couple._1().split(",")[2], String.valueOf(Math.round((couple._2()[1]/couple._2()[0])*100-100))}).sortBy(x->Long.parseLong(x[2]), true, 1);
 	
-//		//ticker nome    quotazioni
+		//prima groupBy per ogni ticker e nome ho le quotazioni, seconda groupBy per ogni quotazione ho le aziende che hanno avuto stesso trend
 		 JavaPairRDD<Iterable<String>, Iterable<String>> quotazioni = risultato.mapToPair(x -> new Tuple2<>(x[0]+","+x[1], x[3])).groupByKey().mapToPair(couple->new Tuple2<>(couple._2(), couple._1())).groupByKey().coalesce(1);                   
 		
 				
