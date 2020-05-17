@@ -71,7 +71,7 @@ public class JobTwoSpark {
 
 	}
 
-	public static String processString(String text) {
+	private static String processString(String text) {
 
 		String[] fields = text.split(",");
 		String ticker = fields[TICKER];
@@ -100,21 +100,21 @@ public class JobTwoSpark {
 
 	}
 
-	public static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
+	private static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
 		if (newdate < olddate) {
 			return newclose;
 		}
 		return oldclose;
 	}
 
-	public static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
+	private static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
 		if (newdate > olddate) {
 			return newclose;
 		}
 		return oldclose;
 	}
 
-	public static Double transformDate(String dataToTrasform) {
+	private static Double transformDate(String dataToTrasform) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateFrm = null;
 		try {

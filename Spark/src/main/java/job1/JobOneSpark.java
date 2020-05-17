@@ -18,7 +18,8 @@ public class JobOneSpark {
 
 	public static void main(String[] args) {
 		
-		String file = "/home/fabiano/data/historical_stock_prices.csv";
+		
+		String file = "/home/fabiano/data//file/doppio_historical_stock_prices.csv";
 		
 		SparkSession spark = SparkSession
 				.builder()
@@ -45,26 +46,25 @@ public class JobOneSpark {
 		JavaRDD<String> risultato = ordinato.map(x -> x[0]+ ":"+ x[1]+ ","+ x[2]+ ","+ x[3]+ ","+ x[4]);
 
 		risultato.saveAsTextFile("/home/fabiano/sparkresult.txt");
-		
-	
+			
 	
 	}
 	
-	public static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
+	private static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
 		if (newdate < olddate) {
 			return newclose; 
 		}
 		return oldclose;
 	}
 	
-	public static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
+	private static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
 		if (newdate > olddate) {
 			return newclose;
 		}
 		return oldclose;
 	}
 	
-	public static Double transformDate(String dataToTrasform ) {
+	private static Double transformDate(String dataToTrasform ) {
 		 SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd");
 		 Date dateFrm = null; 
 		 try {
