@@ -11,7 +11,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 public class JoinReducer extends Reducer<Text, Text, Text, Text> {
 
 	private final int SECTOR = 1;
-	private final int NAME = 2;
 	private final int PREZZOCHIUSURA = 1;
 	private final int VOLUME = 2;
 	private final int DATE = 3;
@@ -43,7 +42,7 @@ public class JoinReducer extends Reducer<Text, Text, Text, Text> {
 
 			for (String[] price : prices) {
 				
-				context.write(new Text(ActionSymbolId+","), new Text(stock[SECTOR]+","+stock[NAME]+","+price[VOLUME]+","+price[PREZZOCHIUSURA]+","+price[DATE]));
+				context.write(new Text(ActionSymbolId+","), new Text(stock[SECTOR]+","+price[VOLUME]+","+price[PREZZOCHIUSURA]+","+price[DATE]));
 			}
 		}
 	}

@@ -35,7 +35,7 @@ FROM historicalStocksRow;
 
 
 CREATE TABLE jAll AS
-SELECT  HSP.ticker,HS.sector,HS.name,HSP.volume,HSP.close,year(data) as year, HSP.data 
+SELECT  HSP.ticker,HS.sector,HSP.volume,HSP.close,year(data) as year, HSP.data 
 FROM historicalStockPrices HSP JOIN historicalStocks HS ON(HSP.ticker=HS.ticker)
 WHERE year(data)>=2008 AND year(data)<=2018;
 
