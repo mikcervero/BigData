@@ -3,6 +3,7 @@ package job3;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -60,14 +61,12 @@ public class JobThreeSpark {
 		
 		//(ticker, nome, anno    ->     chiusuriniziale, chiusurafinale)    
 		JavaPairRDD<String, Double[]> agg = tupla.reduceByKey((x,y) -> new Double[] {chiusurainiziale(x[0], y[0], x[1], y[1]), chiusurafinale(x[0], y[0], x[1], y[1])});
-	
-		
 			
 	    //ticker,nome,anno,quotazione   
 		JavaRDD<String[]> risultato = agg.map(couple -> new String[] {couple._1().split(",")[0], couple._1().split(",")[1], couple._1().split(",")[2], String.valueOf(Math.round((couple._2()[1]/couple._2()[0])*100-100))}).sortBy(x->Long.parseLong(x[2]), true, 1);
 	
 		//prima groupBy per ogni ticker e nome ho le quotazioni, seconda groupBy per ogni quotazione ho le aziende che hanno avuto stesso trend
-		 JavaPairRDD<Iterable<String>, Iterable<String>> quotazioni = risultato.mapToPair(x -> new Tuple2<>(x[0]+","+x[1], x[3])).groupByKey().mapToPair(couple->new Tuple2<>(couple._2(), couple._1())).groupByKey().coalesce(1);                   
+		 JavaPairRDD<Iterable<String>, Iterable<String>> quotazioni = risultato.mapToPair(x -> new Tuple2<>(x[0]+","+x[1], x[3])).groupByKey().filter(x -> ((Collection<String>)x._2()).size()==3 ).mapToPair(couple->new Tuple2<>(couple._2(), couple._1())).groupByKey().filter(x-> ((Collection<String>)x._2()).size()>1).coalesce(1);                   
 		
 				
 		quotazioni.saveAsTextFile("/home/fabiano/risultato.txt");
