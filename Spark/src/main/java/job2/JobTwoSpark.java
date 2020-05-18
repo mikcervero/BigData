@@ -51,19 +51,19 @@ public class JobTwoSpark {
 		// ticker,settore, chiusura, volume, data, anno
 		JavaRDD<String[]> joinresult = join.map(couple -> new String[] { couple._1(), couple._2()._1[0], couple._2()._2[0], couple._2()._2[1], couple._2()._2[2], couple._2()._2[3] });
 
-		//(ticker,settore,anno          ->   volume,chiusura,data,1(conteggio record),chiusura)
+		//((ticker,settore,anno)          ->   volume,chiusura,data,1(conteggio record),chiusura)
 		JavaPairRDD<Tuple3<String,String,String>, Double[]> a = joinresult.mapToPair(x -> new Tuple2<>(new Tuple3<>(x[0],x[1],x[5]), new Double[] { Double.parseDouble(x[3]), Double.parseDouble(x[2]), transformDate(x[4]), 1.0, Double.parseDouble(x[2])}));
 		
-		//(ticker,settore,anno      -> somma_volume, chiusurainiziale,chisurafinale, conteggiorecord, somma_chiusure)
+		//((ticker,settore,anno)      -> somma_volume, chiusurainiziale,chisurafinale, conteggiorecord, somma_chiusure)
 		JavaPairRDD<Tuple3<String,String,String>, Double[]> b = a.reduceByKey((x, y) -> new Double[] {x[0] + y[0], chiusurainiziale(x[1], y[1], x[2], y[2]), chiusurafinale(x[1], y[1], x[2], y[2]), x[3] + y[3], x[4]+y[4] });
 		
 		//(ticker,settore,anno,somma_volume,quotazione,quotazione_giornaliera)
 		JavaRDD<String[]> c = b.map(x -> new String[] {x._1()._1(),x._1()._2(),x._1()._3(),String.valueOf(x._2()[0]),String.valueOf(Math.round((x._2()[2]/x._2()[1])*100-100)),String.valueOf(x._2()[4]/x._2()[3])});
 		
-		//(settore,anno         ->       volume,1, quotazione,quotazione_giornaliera)
+		//((settore,anno)         ->       volume,1, quotazione,quotazione_giornaliera)
 		JavaPairRDD<Tuple2<String,String>, Double[]> intermedio = c.mapToPair(x -> new Tuple2<>(new Tuple2<>(x[1],x[2]), new Double[] { Double.parseDouble(x[3]), 1.0, Double.parseDouble(x[4]), Double.parseDouble(x[5]) }));
 		
-		//(settore,anno         ->       somma_volume, conteggio record, somma_quotazioni_annuali, somma_quotazioni_giornaliere)
+		//((settore,anno)         ->       somma_volume, conteggio record, somma_quotazioni_annuali, somma_quotazioni_giornaliere)
 		JavaPairRDD<Tuple2<String,String>, Double[]> agg = intermedio.reduceByKey((x, y) -> new Double[] { x[0] + y[0], x[1] + y[1], x[2] +y[2], x[3]+y[3] });
 
 		JavaRDD<String> risultato = agg.map(x -> x._1()._1()+","+x._1()._2() + "," + String.valueOf(x._2()[0] / x._2()[1])+ ","+ String.valueOf(x._2()[2]/x._2()[1])+","+String.valueOf(x._2()[3]/x._2()[1])).coalesce(1);
