@@ -9,7 +9,7 @@ DROP TABLE if exists job2;
 
 
 CREATE TABLE jAll AS
-SELECT  HSP.ticker,HS.sector,HS.name,HSP.volume,HSP.close,HSP.year,to_date(concat(HSP.year,'-',HSP.month,'-',HSP.day)) as data 
+SELECT  HSP.ticker,HS.sector,HSP.volume,HSP.close,HSP.year,to_date(concat(HSP.year,'-',HSP.month,'-',HSP.day)) as data 
 FROM stock_prices_byYear HSP JOIN historicalStocks HS ON(HSP.ticker=HS.ticker);
 
 CREATE TABLE  richiestaA AS
