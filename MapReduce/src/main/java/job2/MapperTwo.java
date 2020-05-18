@@ -9,9 +9,9 @@ public class MapperTwo extends Mapper <Object, Text, Text, Text>{
 	
 	private final int TICKER = 0;
 	private final int SECTOR = 1;
-	private final int VOLUME = 3;
-	private final int CLOSE = 4;
-	private final int DATE = 5;
+	private final int VOLUME = 2;
+	private final int CLOSE = 3;
+	private final int DATE = 4;
 	
 	
 	

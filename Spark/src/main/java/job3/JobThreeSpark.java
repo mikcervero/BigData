@@ -3,6 +3,7 @@ package job3;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,7 @@ import Parser.Parser;
 import avro.shaded.com.google.common.collect.Lists;
 import avro.shaded.com.google.common.collect.Sets;
 import scala.Tuple2;
+import scala.Tuple3;
 
 public class JobThreeSpark {
 
@@ -34,7 +36,7 @@ public class JobThreeSpark {
 
 		SparkSession spark = SparkSession
 				.builder()
-				.appName("JobTwo")
+				.appName("JobThree")
 				.getOrCreate();
 		
 		JavaRDD<String> line1 = spark.read().textFile(file1).javaRDD();
@@ -55,26 +57,24 @@ public class JobThreeSpark {
 		//ticker, nome, chiusura, data, anno      
 		JavaRDD<String[]> joinresult = join.map(couple -> new String[] { couple._1(), couple._2()._1[0], couple._2()._2[0], couple._2()._2[1], couple._2()._2[2]});
 	
-		//ticker, nome, anno          chiusura data
-		JavaPairRDD<String , Double[]> tupla = joinresult.mapToPair(x -> new Tuple2<>(x[0]+","+ x[1]+","+x[4], new Double[] {Double.parseDouble(x[2]), transformDate(x[3])}));
+		//((ticker, nome, anno)   ->       chiusura data)
+		JavaPairRDD<Tuple3<String,String,String> , Double[]> tupla = joinresult.mapToPair(x -> new Tuple2<>(new Tuple3<>(x[0],x[1],x[4]), new Double[] {Double.parseDouble(x[2]), transformDate(x[3])}));
 		
-		//ticker, nome, anno         chiusuriniziale, chiusurafinale    
-		JavaPairRDD<String, Double[]> agg = tupla.reduceByKey((x,y) -> new Double[] {chiusurainiziale(x[0], y[0], x[1], y[1]), chiusurafinale(x[0], y[0], x[1], y[1])});
-	
-		
+		//((ticker, nome, anno)    ->     chiusuriniziale, chiusurafinale)    
+		JavaPairRDD<Tuple3<String,String,String> , Double[]> agg = tupla.reduceByKey((x,y) -> new Double[] {chiusurainiziale(x[0], y[0], x[1], y[1]), chiusurafinale(x[0], y[0], x[1], y[1])});
 			
-//	    ticker,nome,anno                   quotazione   
-		JavaRDD<String[]> risultato = agg.map(couple -> new String[] {couple._1().split(",")[0], couple._1().split(",")[1], couple._1().split(",")[2], String.valueOf(Math.round((couple._2()[1]/couple._2()[0])*100-100))}).sortBy(x->Long.parseLong(x[2]), true, 1);
+	    //ticker,nome,anno,quotazione   
+		JavaRDD<String[]> risultato = agg.map(couple -> new String[] {couple._1()._1(), couple._1()._2(), couple._1()._3(), String.valueOf(Math.round((couple._2()[1]/couple._2()[0])*100-100))}).sortBy(x->Long.parseLong(x[2]), true, 1);
 	
-//		//ticker nome    quotazioni
-		 JavaPairRDD<Iterable<String>, Iterable<String>> quotazioni = risultato.mapToPair(x -> new Tuple2<>(x[0]+","+x[1], x[3])).groupByKey().mapToPair(couple->new Tuple2<>(couple._2(), couple._1())).groupByKey().coalesce(1);                   
+		//prima groupBy per ogni ticker e nome ho le quotazioni, seconda groupBy per ogni quotazione ho le aziende che hanno avuto stesso trend
+		 JavaPairRDD<Iterable<String>, Iterable<String>> quotazioni = risultato.mapToPair(x -> new Tuple2<>(new Tuple2<>(x[0],x[1]), x[3])).groupByKey().filter(x -> ((Collection<String>)x._2()).size()==3 ).mapToPair(couple->new Tuple2<>(couple._2(), couple._1()._2())).groupByKey().filter(x-> ((Collection<String>)x._2()).size()>1).coalesce(1);                   
 		
 				
 		quotazioni.saveAsTextFile("/home/fabiano/risultato.txt");
 		
 	}
 	
-	  public static String processString (String text)	{
+	  private static String processString (String text)	{
 		  
 		    String[] fields= text.split(",");
 			String ticker= fields[TICKER];
@@ -115,21 +115,21 @@ public class JobThreeSpark {
 	
 	
 	
-	public static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
+	private static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
 		if (newdate < olddate) {
 			return newclose;
 		}
 		return oldclose;
 	}
 
-	public static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
+	private static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
 		if (newdate > olddate) {
 			return newclose;
 		}
 		return oldclose;
 	}
 
-	public static Double transformDate(String dataToTrasform) {
+	private static Double transformDate(String dataToTrasform) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateFrm = null;
 		try {
