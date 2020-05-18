@@ -30,8 +30,9 @@ public class ReducerThree extends Reducer<Text, Text, Text, Text> {
 			String azienda= value.toString().split(",")[0];
 			String ticker= value.toString().split(",")[1];
 			
-			aziende.add(azienda);
-			tickers.add(ticker);
+			if(!aziende.contains(azienda))
+			   aziende.add(azienda);
+			 tickers.add(ticker);
 			}
 		
 		String[]variazione=variazioni.toString().split(",");
