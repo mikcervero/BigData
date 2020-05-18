@@ -3,7 +3,7 @@ drop table if exists stock_prices;
 
 create table stock_prices (ticker STRING, open DOUBLE, close DOUBLE, adj_close DOUBLE, lowThe DOUBLE, highThe DOUBLE, volume INT, data DATE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
-LOAD DATA LOCAL INPATH '/Applications/GitHub/BigData/DataSet/historical_stock_prices.csv' OVERWRITE INTO TABLE stock_prices;
+LOAD DATA LOCAL INPATH '/Applications/GitHub/BigData/DataSet/10milioni-historical_stock_prices.csv' OVERWRITE INTO TABLE stock_prices;
 
 
 create table data_stock_prices_byyear as
