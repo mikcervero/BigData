@@ -51,14 +51,37 @@ public class JobTwoSpark {
 		// ticker,settore, chiusura, volume, data, anno
 		JavaRDD<String[]> joinresult = join.map(couple -> new String[] { couple._1(), couple._2()._1[0], couple._2()._2[0], couple._2()._2[1], couple._2()._2[2], couple._2()._2[3] });
 
-		//((ticker,settore,anno)          ->   volume,chiusura,data,1(conteggio record),chiusura)
-		JavaPairRDD<Tuple3<String,String,String>, Double[]> a = joinresult.mapToPair(x -> new Tuple2<>(new Tuple3<>(x[0],x[1],x[5]), new Double[] { Double.parseDouble(x[3]), Double.parseDouble(x[2]), transformDate(x[4]), 1.0, Double.parseDouble(x[2])}));
+		//((ticker,settore,anno)          ->   volume, chiusurainiziale, chiusurafinale, datainiziale, datafinale ,1(conteggio record),chiusura)
+		JavaPairRDD<Tuple3<String,String,String>, Double[]> a = joinresult.mapToPair(x -> new Tuple2<>(new Tuple3<>(x[0],x[1],x[5]), new Double[] { Double.parseDouble(x[3]), Double.parseDouble(x[2]), Double.parseDouble(x[2]), transformDate(x[4]), transformDate(x[4]), 1.0, Double.parseDouble(x[2])}));
 		
-		//((ticker,settore,anno)      -> somma_volume, chiusurainiziale,chisurafinale, conteggiorecord, somma_chiusure)
-		JavaPairRDD<Tuple3<String,String,String>, Double[]> b = a.reduceByKey((x, y) -> new Double[] {x[0] + y[0], chiusurainiziale(x[1], y[1], x[2], y[2]), chiusurafinale(x[1], y[1], x[2], y[2]), x[3] + y[3], x[4]+y[4] });
+		//((ticker,settore,anno)      -> somma_volume, chiusurainiziale, chisurafinale, datainiziale, datafinale, conteggiorecord, somma_chiusure)
+		JavaPairRDD<Tuple3<String,String,String>, Double[]> b = a.reduceByKey((x, y) ->  {
+			Double datainiziale ;
+			Double chiusurainiziale;
+			Double datafinale;
+			Double chiusurafinale;
+			if (x[3]<y[3]) {
+				datainiziale = x[3];
+				chiusurainiziale = x[1];
+			}
+			else {
+				datainiziale = y[3];
+				chiusurainiziale = y[1];
+			}
+			if (x[4]>y[4]) {
+				datafinale = x[4];
+				chiusurafinale = x[2];
+			}
+			else {
+				datafinale = y[5];
+				chiusurafinale = y[2];
+			}		
+			
+			return new Double[] {x[0] + y[0], chiusurainiziale, chiusurafinale, datainiziale, datafinale, x[5] + y[5], x[6]+y[6] };
+		});
 		
 		//(ticker,settore,anno,somma_volume,quotazione,quotazione_giornaliera)
-		JavaRDD<String[]> c = b.map(x -> new String[] {x._1()._1(),x._1()._2(),x._1()._3(),String.valueOf(x._2()[0]),String.valueOf(Math.round((x._2()[2]/x._2()[1])*100-100)),String.valueOf(x._2()[4]/x._2()[3])});
+		JavaRDD<String[]> c = b.map(x -> new String[] {x._1()._1(),x._1()._2(),x._1()._3(),String.valueOf(x._2()[0]),String.valueOf(Math.round((x._2()[2]/x._2()[1])*100-100)),String.valueOf(x._2()[6]/x._2()[5])});
 		
 		//((settore,anno)         ->       volume,1, quotazione,quotazione_giornaliera)
 		JavaPairRDD<Tuple2<String,String>, Double[]> intermedio = c.mapToPair(x -> new Tuple2<>(new Tuple2<>(x[1],x[2]), new Double[] { Double.parseDouble(x[3]), 1.0, Double.parseDouble(x[4]), Double.parseDouble(x[5]) }));
@@ -99,20 +122,6 @@ public class JobTwoSpark {
 
 		return result = ticker + "," + fields[NAME] + "," + sector;
 
-	}
-
-	private static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
-		if (newdate < olddate) {
-			return newclose;
-		}
-		return oldclose;
-	}
-
-	private static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
-		if (newdate > olddate) {
-			return newclose;
-		}
-		return oldclose;
 	}
 
 	private static Double transformDate(String dataToTrasform) {
