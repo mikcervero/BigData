@@ -4,16 +4,16 @@ DROP TABLE if exists jAll;
 
 CREATE TABLE  historicalStockPrices (ticker STRING, open DOUBLE, close DOUBLE, adj_close DOUBLE, lowThe DOUBLE, highThe DOUBLE, volume INT, data DATE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
-LOAD DATA LOCAL INPATH '/Applications/GitHub/BigData/DataSet/500000-historical_stock_prices.csv' OVERWRITE INTO TABLE historicalStockPrices;
+LOAD DATA LOCAL INPATH '/home/fabiano/data/historical_stock_prices.csv' OVERWRITE INTO TABLE historicalStockPrices;
 
 DROP TABLE if exists historicalStocksRow;
 
 CREATE TABLE historicalStocksRow(stockRow STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY "\n";
 
-LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv' OVERWRITE INTO TABLE historicalStocksRow;
+LOAD DATA LOCAL INPATH '/home/fabiano/data/historical_stocks.csv' OVERWRITE INTO TABLE historicalStocksRow;
 
-add jar /Applications/GitHub/BigData/Hive/Job3/Parser.jar ;                                   
+add jar /home/fabiano/eclipse-workspace/BigData/Hive/Job3/Parser.jar ;                                   
 CREATE TEMPORARY FUNCTION Parser AS 'Hive.Parser.Parser';
 
 
@@ -59,12 +59,13 @@ drop table if exists intermediate2;
 create table intermediate2 as
 select ticker, nome, concat_ws(',',collect_list(cast (quotazione as string))) as quotazione
 from ordinatianno
-group by ticker, nome;
+group by ticker, nome
+having size(collect_list(quotazione))=3;
 
 drop table if exists job3;
 create table job3 as 
-select collect_set(nome), quotazione 
+select collect_set(nome), collect_set(ticker), quotazione 
 from intermediate2 
 group by quotazione
-where size(collect_set(nome))>1;
+having size(collect_set(nome))>1;
 
