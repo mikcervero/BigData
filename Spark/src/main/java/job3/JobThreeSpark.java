@@ -57,11 +57,35 @@ public class JobThreeSpark {
 		//ticker, nome, chiusura, data, anno      
 		JavaRDD<String[]> joinresult = join.map(couple -> new String[] { couple._1(), couple._2()._1[0], couple._2()._2[0], couple._2()._2[1], couple._2()._2[2]});
 	
-		//((ticker, nome, anno)   ->       chiusura data)
-		JavaPairRDD<Tuple3<String,String,String> , Double[]> tupla = joinresult.mapToPair(x -> new Tuple2<>(new Tuple3<>(x[0],x[1],x[4]), new Double[] {Double.parseDouble(x[2]), transformDate(x[3])}));
+		//((ticker, nome, anno)   ->       chiusurainiziale, chiusurafinale, datainiziale, datafinale)
+		JavaPairRDD<Tuple3<String,String,String> , Double[]> tupla = joinresult.mapToPair(x -> new Tuple2<>(new Tuple3<>(x[0],x[1],x[4]), new Double[] {Double.parseDouble(x[2]), Double.parseDouble(x[2]), transformDate(x[3]), transformDate(x[3])}));
 		
-		//((ticker, nome, anno)    ->     chiusuriniziale, chiusurafinale)    
-		JavaPairRDD<Tuple3<String,String,String> , Double[]> agg = tupla.reduceByKey((x,y) -> new Double[] {chiusurainiziale(x[0], y[0], x[1], y[1]), chiusurafinale(x[0], y[0], x[1], y[1])});
+		//((ticker, nome, anno)    ->     chiusuriniziale, chiusurafinale, datainiziale, datafinale)    
+		JavaPairRDD<Tuple3<String,String,String> , Double[]> agg = tupla.reduceByKey((x,y) -> {
+			Double datainiziale ;
+			Double chiusurainiziale;
+			Double datafinale;
+			Double chiusurafinale;
+			if (x[2]<y[2]) {
+				datainiziale = x[2];
+				chiusurainiziale = x[0];
+			}
+			else {
+				datainiziale = y[2];
+				chiusurainiziale = y[0];
+			}
+			if (x[3]>y[3]) {
+				datafinale = x[3];
+				chiusurafinale = x[1];
+			}
+			else {
+				datafinale = y[3];
+				chiusurafinale = y[1];
+			}	
+			
+			
+			return new Double[] { chiusurainiziale, chiusurafinale, datainiziale, datafinale};
+		});
 			
 	    //ticker,nome,anno,quotazione   
 		JavaRDD<String[]> risultato = agg.map(couple -> new String[] {couple._1()._1(), couple._1()._2(), couple._1()._3(), String.valueOf(Math.round((couple._2()[1]/couple._2()[0])*100-100))}).sortBy(x->Long.parseLong(x[2]), true, 1);
@@ -113,21 +137,6 @@ public class JobThreeSpark {
 				 	
 	  }
 	
-	
-	
-	private static Double chiusurainiziale(Double oldclose, Double newclose, Double olddate, Double newdate) {
-		if (newdate < olddate) {
-			return newclose;
-		}
-		return oldclose;
-	}
-
-	private static Double chiusurafinale(Double oldclose, Double newclose, Double olddate, Double newdate) {
-		if (newdate > olddate) {
-			return newclose;
-		}
-		return oldclose;
-	}
 
 	private static Double transformDate(String dataToTrasform) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
