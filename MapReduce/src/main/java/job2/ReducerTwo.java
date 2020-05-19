@@ -56,7 +56,7 @@ public class ReducerTwo extends Reducer<Text, Text, Text, Text> {
 		long sumVolume = 0;
 		double averageVolume = 0;
 		int vaForTicker=0;
-		int sumVa=0;
+		double sumVa=0;
 		double averageVa=0;
 		double averageClose=0;
 		double SumClose=0;
