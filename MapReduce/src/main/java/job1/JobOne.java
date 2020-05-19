@@ -74,22 +74,22 @@ public class JobOne {
 		public void reduce(Text ActionSymbolId, Iterable<Text> values, Context context)
 				throws IOException, InterruptedException {
 
-			float minPrezzo = Float.MAX_VALUE;
-			float maxPrezzo = Float.MIN_VALUE;
-			long sumVolume = 0;
-			float prezzoChiusuraIniziale = 0;
-			float prezzoChiusuraFinale = 0;
+			double minPrezzo = Double.MAX_VALUE;
+			double maxPrezzo = Double.MIN_VALUE;
+			double sumVolume = 0;
+			double prezzoChiusuraIniziale = 0;
+			double prezzoChiusuraFinale = 0;
 			long UltimaData = Long.MIN_VALUE;
 			long PrimaData = Long.MAX_VALUE;
-			float averageVolume = 0;
-			int numberOfRecord = 0;
+			double averageVolume = 0;
+			double numberOfRecord = 0;
 			int variazioneQuotazione = 0;
 			
 			for (Text Actionvalues : values) {
 				String[] Avalue = Actionvalues.toString().split(",");
 				long volume = Long.parseLong(Avalue[VOLUME]);
 				long date = Long.parseLong(Avalue[DATE]);
-				float prezzoChiusura = Float.parseFloat(Avalue[PREZZOCHIUSURA]);
+				double prezzoChiusura = Double.parseDouble(Avalue[PREZZOCHIUSURA]);
 				
 				//conteggio record per media volume
 				numberOfRecord++;
@@ -122,11 +122,13 @@ public class JobOne {
 			
 			//calcolo media volume
 			averageVolume = sumVolume / numberOfRecord;
+			
 			//calcolo quotazione
-			variazioneQuotazione = Math
+			variazioneQuotazione = (int) Math
 					.round(((prezzoChiusuraFinale - prezzoChiusuraIniziale) / prezzoChiusuraIniziale) * 100);
 
 			Text result = new Text("    " +variazioneQuotazione+ "    " + minPrezzo + "    " + maxPrezzo + "    " + averageVolume);
+			
 			mappa.put(new Text(ActionSymbolId), result);
 		}
 		
@@ -134,7 +136,12 @@ public class JobOne {
 		protected void cleanup(Context context) throws IOException, InterruptedException {
 			Map<Text, Text> sortedMap = sortByValues(mappa);
 			for (Text key : sortedMap.keySet()) {
-				context.write(key, sortedMap.get(key));
+				
+				String[] result= sortedMap.get(key).toString().split("    ");
+				
+				Text value = new Text("    "+result[1]+"%     "+result[2]+"    "+result[3]+"    "+result[4]);
+				
+				context.write(key, value);
 			}
 			
 		}
