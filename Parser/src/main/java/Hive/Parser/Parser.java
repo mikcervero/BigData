@@ -17,7 +17,7 @@ public class Parser extends GenericUDTF
 	private final int TICKER = 0;
 	private final int NAME = 2;
 	private PrimitiveObjectInspector inputString;
-	private static final Integer OUT_COLS = 3;
+	private static final Integer OUT_COLS = 2;
 	private transient Object forwardColObj[] = new Object[OUT_COLS];
 	
 	public Parser() {};
@@ -26,12 +26,10 @@ public class Parser extends GenericUDTF
 @Override	
 	public StructObjectInspector initialize(final ObjectInspector[] args) throws UDFArgumentException {
         inputString = (PrimitiveObjectInspector)args[0];
-        final List<String> outputField = new ArrayList<String>(3);
-        final List<ObjectInspector> outputValueFields = new ArrayList<ObjectInspector>(3);
+        final List<String> outputField = new ArrayList<String>(2);
+        final List<ObjectInspector> outputValueFields = new ArrayList<ObjectInspector>(2);
         outputField.add("ticker");
         outputField.add("name");
-        outputField.add("sector");
-        outputValueFields.add((ObjectInspector)PrimitiveObjectInspectorFactory.javaStringObjectInspector);
         outputValueFields.add((ObjectInspector)PrimitiveObjectInspectorFactory.javaStringObjectInspector);
         outputValueFields.add((ObjectInspector)PrimitiveObjectInspectorFactory.javaStringObjectInspector);
 		return (StructObjectInspector)ObjectInspectorFactory.getStandardStructObjectInspector(outputField, outputValueFields);
@@ -49,41 +47,33 @@ public class Parser extends GenericUDTF
 	String[] fields= text.split(",");
 	String ticker= fields[TICKER];
 	String sector= fields[fields.length-2];
-	String industry=fields[fields.length-1];	
+	String industry = fields[fields.length - 1];	
 	
 
-	if(sector.equals("N/A")) {
-		
-		return; 
+	if (industry.equals("N/A") || ticker.equals("N/A") || sector.equals("N/A") ) {
+
+		return;
 	}
 	
-	if(industry.indexOf('"')!=-1) {
-		
-		sector= fields[fields.length-3];
-	}
 	
 	
 	if(fields[2].indexOf('"')!=-1) {
 		fields[2]=fields[2].replace('"', ' ');
 		fields[3]=fields[3].replace('"', ' ');
-		fields[2]=fields[2]+fields[3];
-  
-		
-		forwardColObj[0]= ticker;
-		forwardColObj[1]= fields[2];
-		forwardColObj[2]= sector;
-			
-		forward(forwardColObj);
+		fields[NAME]=fields[2]+fields[3];
+  	
         
 	}
 	
 	
+		
+	
 	forwardColObj[0]= ticker;
 	forwardColObj[1]= fields[NAME];
-	forwardColObj[2]= sector;
+	
 		
 	forward(forwardColObj);
-	 
+	
 	
 	}
 
