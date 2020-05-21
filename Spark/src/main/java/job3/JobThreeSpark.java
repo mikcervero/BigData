@@ -91,7 +91,7 @@ public class JobThreeSpark {
 		JavaRDD<String[]> risultato = agg.map(couple -> new String[] {couple._1()._1(), couple._1()._2(), couple._1()._3(), String.valueOf(Math.round((couple._2()[1]/couple._2()[0])*100-100))}).sortBy(x->Long.parseLong(x[2]), true, 1);
 	
 		//prima groupBy per ogni ticker e nome ho le quotazioni, seconda groupBy per ogni quotazione ho le aziende che hanno avuto stesso trend
-		 JavaPairRDD<Iterable<String>, Iterable<String>> quotazioni = risultato.mapToPair(x -> new Tuple2<>(new Tuple2<>(x[0],x[1]), x[3])).groupByKey().filter(x -> ((Collection<String>)x._2()).size()==3 ).mapToPair(couple->new Tuple2<>(couple._2(), couple._1()._2())).groupByKey().filter(x-> ((Collection<String>)x._2()).size()>1).coalesce(1);                   
+		 JavaPairRDD<Iterable<String>, Iterable<String>> quotazioni = risultato.mapToPair(x -> new Tuple2<>(new Tuple2<>(x[0],x[1]), x[3])).groupByKey().filter(x -> ((Collection<String>)x._2()).size()==3 ).mapToPair(couple->new Tuple2<>(couple._2(), couple._1()._2()+";"+couple._1()._1())).groupByKey().filter(x-> ((Collection<String>)x._2()).size()>1).coalesce(1);                   
 		
 				
 		quotazioni.saveAsTextFile("/home/fabiano/risultato.txt");
