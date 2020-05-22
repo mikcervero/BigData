@@ -24,6 +24,7 @@ public class JobTwoSpark {
 	private static final Pattern DASH = Pattern.compile("-");
 	private static final int TICKER = 0;
 	private static final int NAME = 2;
+	private static final int EXCHANGE = 1;
 
 	public static void main(String[] args) {
 
@@ -102,25 +103,29 @@ public class JobTwoSpark {
 		String sector = fields[fields.length - 2];
 		String industry = fields[fields.length - 1];
 		String result = null;
+		String exchange = fields[EXCHANGE];
+		String name= fields[NAME];
+		
+		if (industry.equals("N/A") || exchange.equals("N/A") || ticker.equals("N/A") || sector.equals("N/A")|| name.equals("N/A")) {
+
+			return result;
+		}
 
 		if (industry.indexOf('"') != -1) {
 
 			sector = fields[fields.length - 3];
 		}
 
-		if (sector.equals("N/A")) {
+		
 
-			return result;
-		}
-
-		if (fields[NAME].indexOf('"') != -1) {
-			fields[NAME] = fields[2].replace('"', ' ');
+		if (name.indexOf('"') != -1) {
+			fields[2] = fields[2].replace('"', ' ');
 			fields[3] = fields[3].replace('"', ' ');
-			fields[NAME] = fields[2] + fields[3];
+			name = fields[2] + fields[3];
 
 		}
 
-		return result = ticker + "," + fields[NAME] + "," + sector;
+		return result = ticker + "," + name + "," + sector;
 
 	}
 
