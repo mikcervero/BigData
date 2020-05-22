@@ -3,7 +3,8 @@ package parser;
 public class Parser {
 	private final int TICKER = 0;
 	private final int NAME = 2;
-
+	private final int EXCHANGE = 1;
+	
 	public Parser() {
 	};
 
@@ -14,13 +15,14 @@ public class Parser {
 		String sector = fields[fields.length - 2];
 		String industry = fields[fields.length - 1];
 		String result = null;
-		
-		
-		
-		if (industry.equals("N/A") || ticker.equals("N/A") || sector.equals("N/A") ) {
+		String name= fields[NAME];
+		String exchange = fields[EXCHANGE];
+
+		if (industry.equals("N/A") || exchange.equals("N/A") || ticker.equals("N/A") || sector.equals("N/A")|| name.equals("N/A")) {
 
 			return result;
 		}
+
 		
 
 		if (industry.indexOf('"') != -1) {
