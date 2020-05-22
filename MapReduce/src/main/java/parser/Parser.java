@@ -31,14 +31,14 @@ public class Parser {
 		}
 
 
-		if (fields[NAME].indexOf('"') != -1) {
-			fields[NAME] = fields[2].replace('"', ' ');
+		if (name.indexOf('"') != -1) {
+			fields[2] = fields[2].replace('"', ' ');
 			fields[3] = fields[3].replace('"', ' ');
-			fields[NAME] = fields[2] + fields[3];
+			name = fields[2] + fields[3];
 
 		}
 
-		return result = ticker + "," + fields[NAME] + "," + sector;
+		return result = ticker + "," + name + "," + sector;
 
 	}
 
