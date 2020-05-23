@@ -16,7 +16,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
 
-import Parser.Parser;
+
 import avro.shaded.com.google.common.collect.Lists;
 import avro.shaded.com.google.common.collect.Sets;
 import scala.Tuple2;
