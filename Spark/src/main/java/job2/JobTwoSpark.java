@@ -27,13 +27,11 @@ public class JobTwoSpark {
 
 	public static void main(String[] args) {
 
-		String file1 = "/home/fabiano/data/historical_stocks.csv";
-		String file2 = "/home/fabiano/data/historical_stock_prices.csv";
 
 		SparkSession spark = SparkSession.builder().appName("JobTwo").getOrCreate();
 
-		JavaRDD<String> line1 = spark.read().textFile(file1).javaRDD();
-		JavaRDD<String> line2 = spark.read().textFile(file2).javaRDD();
+		JavaRDD<String> line1 = spark.read().textFile(args[0]).javaRDD();
+		JavaRDD<String> line2 = spark.read().textFile(args[1]).javaRDD();
 
 		JavaRDD<String[]> words1 = line1.map(s -> processString(s)).filter(x -> x != null)
 				.map(x -> new String[] { x.split(",")[0], x.split(",")[2] });
@@ -91,7 +89,7 @@ public class JobTwoSpark {
 
 		JavaRDD<String> risultato = agg.map(x -> x._1()._1()+","+x._1()._2() + "," + String.valueOf(x._2()[0] / x._2()[1])+ ","+ String.valueOf(x._2()[2]/x._2()[1])+","+String.valueOf(x._2()[3]/x._2()[1])).coalesce(1);
 
-		risultato.saveAsTextFile("/home/fabiano/risultato.txt");
+		risultato.saveAsTextFile(args[2]);
 
 	}
 

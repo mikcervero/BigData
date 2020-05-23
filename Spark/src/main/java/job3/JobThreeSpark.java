@@ -32,16 +32,14 @@ public class JobThreeSpark {
 
 	public static void main(String[] args) {
 		
-		String file1 = "/home/fabiano/data/historical_stocks.csv";
-		String file2 = "/home/fabiano/data/historical_stock_prices.csv";
 
 		SparkSession spark = SparkSession
 				.builder()
 				.appName("JobThree")
 				.getOrCreate();
 		
-		JavaRDD<String> line1 = spark.read().textFile(file1).javaRDD();
-		JavaRDD<String> line2 = spark.read().textFile(file2).javaRDD();
+		JavaRDD<String> line1 = spark.read().textFile(args[0]).javaRDD();
+		JavaRDD<String> line2 = spark.read().textFile(args[1]).javaRDD();
 		
 		JavaRDD<String[]> words1 = line1.map(s -> processString(s)).filter(x -> x!=null).map(x->new String[] {x.split(",")[0], x.split(",")[1]});
 		JavaRDD<String[]> words2 = line2.map(s -> s.split(",")).filter(x -> x.length==8);
@@ -95,7 +93,7 @@ public class JobThreeSpark {
 		 JavaPairRDD<Iterable<String>, Iterable<String>> quotazioni = risultato.mapToPair(x -> new Tuple2<>(new Tuple2<>(x[0],x[1]), x[3])).groupByKey().filter(x -> ((Collection<String>)x._2()).size()==3 ).mapToPair(couple->new Tuple2<>(couple._2(), couple._1()._2()+";"+couple._1()._1())).groupByKey().filter(x-> ((Collection<String>)x._2()).size()>1).coalesce(1);                   
 		
 				
-		quotazioni.saveAsTextFile("/home/fabiano/risultato.txt");
+		quotazioni.saveAsTextFile(args[2]);
 		
 	}
 	

@@ -19,7 +19,7 @@ public class JobOneSpark {
 	public static void main(String[] args) {
 		
 		
-		String file = "/home/fabiano/data//file/historical_stock_prices.csv";
+	
 		
 		SparkSession spark = SparkSession
 				.builder()
@@ -27,7 +27,7 @@ public class JobOneSpark {
 				.getOrCreate();
 				
 		
-		JavaRDD<String> line = spark.read().textFile(file).javaRDD();
+		JavaRDD<String> line = spark.read().textFile(args[0]).javaRDD();
 		
 		JavaRDD<String[]> words = line.map(s -> s.split(",")).filter(x -> x.length==8);
 	
@@ -66,7 +66,7 @@ public class JobOneSpark {
 
 		JavaRDD<String> risultato = ordinato.map(x -> x[0]+ ":"+ x[1]+ ","+ x[2]+ ","+ x[3]+ ","+ x[4]);
 
-		risultato.saveAsTextFile("/home/fabiano/sparkresult.txt");
+		risultato.saveAsTextFile(args[1]);
 			
 	
 	}
