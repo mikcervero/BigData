@@ -1,5 +1,5 @@
 # BigData
-First didactic BigData project 
+
 
 <div align="center">
            <img width="45%" src="Image/uGOy9YQG_400x400.jpg" alt="About screen" title="About screen"</img>
