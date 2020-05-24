@@ -13,14 +13,14 @@ DROP TABLE if exists job2;
 
 CREATE TABLE IF NOT EXISTS historicalStockPrices (ticker STRING, open DOUBLE, close DOUBLE, adj_close DOUBLE, lowThe DOUBLE, highThe DOUBLE, volume INT, data DATE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
-LOAD DATA LOCAL INPATH '/Applications/GitHub/BigData/DataSet/10milioni-historical_stock_prices.csv' OVERWRITE INTO TABLE historicalStockPrices;
+LOAD DATA LOCAL INPATH '/path/historical_stock_prices.csv' OVERWRITE INTO TABLE historicalStockPrices;
 
 DROP TABLE if exists historicalStocksRow;
 
 CREATE TABLE historicalStocksRow(stockRow STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY "\n";
 
-LOAD DATA LOCAL INPATH '/Users/micol/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv' OVERWRITE INTO TABLE historicalStocksRow;
+LOAD DATA LOCAL INPATH '/path/historical_stocks.csv' OVERWRITE INTO TABLE historicalStocksRow;
 
 add jar /Applications/GitHub/BigData/Hive/Job2/Parser.jar ;                                   
 CREATE TEMPORARY FUNCTION Parser AS 'Hive.Parser.Parser';
